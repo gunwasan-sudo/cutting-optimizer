@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Cutting Optimizer Pro — ถอดรายการตัดประกอบอลูมิเนียม ประเมินราคา และจัดเรียงตัดเส้นเต็ม (SMS Building / FUJI Eurotech)">
+<meta name="description" content="Cutting Optimizer Pro — ถอดรายการตัดประกอบอลูมิเนียม ประเมินราคา BOM สั่งของ และจัดเรียงตัดเส้นเต็ม (SMS Building / FUJI Eurotech)">
 <meta name="theme-color" content="#0a0f1c">
 <meta property="og:title" content="Cutting Optimizer Pro">
-<meta property="og:description" content="ถอดรายการตัด + ประเมินราคา + แผนตัดเส้นเต็ม (SMS / FUJI)">
+<meta property="og:description" content="ถอดรายการตัด + ประเมินราคา + แผนตัดเส้นเต็ม + BOM สั่งของ (SMS / FUJI)">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%231e40af%22%2F%3E%3Ctext%20x%3D%2232%22%20y%3D%2244%22%20font-size%3D%2236%22%20text-anchor%3D%22middle%22%3E%E2%9C%82%EF%B8%8F%3C%2Ftext%3E%3C%2Fsvg%3E">
 <title>Cutting Optimizer Pro — ถอดรายการตัดประกอบ + ประเมินราคา</title>
@@ -354,6 +354,20 @@ input[type="file"] { display: none; }
   .stat-chip b { color: #000; }
   details.unit-detail { display: none; }
 }
+/* ===== BOM (purchase list) ===== */
+.bom-toggle { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--muted); cursor: pointer; user-select: none; }
+.bom-toggle input { accent-color: var(--primary); width: 15px; height: 15px; cursor: pointer; }
+.bom-meta { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+.bom-meta span { background: var(--bg-elev); border: 1px solid var(--border-strong); border-radius: 999px; padding: 0.3rem 0.75rem; font-size: 0.76rem; color: var(--muted); }
+.bom-meta span b { color: var(--text-strong); }
+.bom-sec { margin-top: 1.6rem; }
+.bom-sec-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.6rem; padding-bottom: 0.45rem; border-bottom: 1px solid var(--border-strong); }
+.bom-sec-head h3 { font-size: 0.95rem; color: var(--text-strong); }
+.bom-sec-head .sub { font-size: 0.78rem; color: var(--muted); }
+.bom-sub { font-size: 0.8rem; font-weight: 700; color: var(--primary-glow); margin: 0.9rem 0 0.35rem; }
+.bom-note { font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem; line-height: 1.6; }
+tr.bom-total td { background: rgba(59,130,246,0.10) !important; font-weight: 700; color: var(--text-strong); }
+
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--surface); border-radius: 10px; }
@@ -449,6 +463,7 @@ input[type="file"] { display: none; }
   <div class="tab-nav">
     <button class="tab-btn active" id="tabbtn-quote" onclick="switchTab('quote')">📋 ① ใบเสนอราคา</button>
     <button class="tab-btn" id="tabbtn-cut" onclick="switchTab('cut')">✂️ ② วางแผนตัด</button>
+    <button class="tab-btn" id="tabbtn-bom" onclick="switchTab('bom')">📦 ③ BOM สั่งของ</button>
   </div>
 
   <!-- ============ TAB 1: QUOTATION ============ -->
@@ -625,6 +640,21 @@ input[type="file"] { display: none; }
       <div id="cuttingResult"><div class="empty-state"><div class="icon">✂️</div><p>ยังไม่ได้คำนวณ — เพิ่มชุดในหน้า "ใบเสนอราคา" แล้วกด ⚡ คำนวณ</p></div></div>
     </div>
   </div><!-- /tab-cut -->
+
+  <!-- ============ TAB 3: BOM (PURCHASE LIST FOR SUPPLIER) ============ -->
+  <div id="tab-bom" class="tab-panel">
+    <div class="card" id="bomResultCard">
+      <h2 id="bomResultTitle">📦 BOM สั่งของ (ใบขอซื้อ)</h2>
+      <div class="toolbar">
+        <button class="btn" onclick="calculate()">⚡ คำนวณใหม่</button>
+        <button class="btn btn-secondary" onclick="exportBomXls()">📥 Export Excel</button>
+        <button class="btn btn-secondary" onclick="window.print()">🖨️ พิมพ์ BOM</button>
+        <label class="bom-toggle"><input type="checkbox" id="bomHidePrice" onchange="renderBom()"> ซ่อนราคา (ส่งให้ supplier)</label>
+        <button class="btn btn-secondary" onclick="switchTab('quote')">← กลับใบเสนอราคา</button>
+      </div>
+      <div id="bomResult"><div class="empty-state"><div class="icon">📦</div><p>ยังไม่ได้คำนวณ — เพิ่มชุดในหน้า "ใบเสนอราคา" แล้วกด ⚡ คำนวณ</p></div></div>
+    </div>
+  </div><!-- /tab-bom -->
 
 </div>
 
@@ -1151,6 +1181,7 @@ function clearAll() {
   renderUnits();
   document.getElementById('quoteResultCard').style.display = 'none';
   document.getElementById('cuttingResult').innerHTML = '<div class="empty-state"><div class="icon">✂️</div><p>ยังไม่ได้คำนวณ — เพิ่มชุดในหน้า "ใบเสนอราคา" แล้วกด ⚡ คำนวณ</p></div>';
+  document.getElementById('bomResult').innerHTML = '<div class="empty-state"><div class="icon">📦</div><p>ยังไม่ได้คำนวณ — เพิ่มชุดในหน้า "ใบเสนอราคา" แล้วกด ⚡ คำนวณ</p></div>';
 }
 
 function renderUnits() {
@@ -1330,7 +1361,7 @@ function calculate() {
     projEtc += etcCost * u.qty;
     projGrand += grand * u.qty;
     projArea += (u.W / 1000) * (u.H / 1000) * u.qty;
-    EXPORT.units.push({ ref: u.ref, type: t.label.split(' — ')[0], brand: t.brand, W: u.W, H: u.H, qty: u.qty, alumKg, alumCost, hwCost, glassCost, glassName: u.glassName, glassFt, etcCost, grandPerSet: grand, pieces: unitPieces, hardware: hw.map(x => ({ name: x.name, qty: x.qty, unit: x.unit, price: x.price })) });
+    EXPORT.units.push({ ref: u.ref, type: t.label.split(' — ')[0], brand: t.brand, W: u.W, H: u.H, qty: u.qty, alumKg, alumCost, hwCost, glassCost, glassName: u.glassName, glassPrice: u.glassPrice, glassFt, glassPanels: built.glassPanels || [], etcCost, grandPerSet: grand, pieces: unitPieces, hardware: hw.map(x => ({ name: x.name, qty: x.qty, unit: x.unit, price: x.price })) });
 
     const brandPill = t.brand === 'FUJI' ? '<span class="pill fuji">FUJI</span>' : '<span class="pill">SMS</span>';
     unitRows += `<tr>
@@ -1470,6 +1501,7 @@ function calculate() {
   EXPORT.settings = { pricePerKg, etcPct, laborPerSqm, overheadPct, profitPct, vatPct, discount, stockLen, kerf };
   EXPORT.totals = { projAlum, projAlumKg, projHw, projGlass, projEtc, projGrand, projArea, grandBars, grandPiecesN, grandUtil, purchaseKg, purchaseCost };
   EXPORT.selling = { material, costBase, laborCost, overheadCost, profitCost, preVat, vatAmt, totalBeforeDiscount, sellTotal, pricePerSqm, netProfit };
+  EXPORT.bom = buildBom(EXPORT);
   lastExport = EXPORT;
 
   // ---------- QUOTATION TAB ----------
@@ -1578,9 +1610,176 @@ function calculate() {
 
     <p class="note">* การจัดเรียงใช้อัลกอริทึม First-Fit Decreasing (1D bar nesting) | สูตรการใช้เส้น FUJI ถอดจากไฟล์ประเมินจริง (โครงการเขาใหญ่) — บานกระทุ้ง+ติดตายใช้สัดส่วน 40/60 โดยประมาณ ปรับได้ด้วยชิ้นตัด manual | ราคา ฿/เส้น = เส้นเต็ม(ม.) × kg/m × ฿/กก.</p>
   `;
+  renderBom();
+
   document.getElementById('quoteResultCard').style.display = 'block';
   switchTab('quote');
   document.getElementById('quoteResultCard').scrollIntoView({ behavior: 'smooth' });
+}
+
+// =====================================================================
+// BOM — รายการสั่งของรวมทั้งโครงการ (สำหรับส่ง supplier)
+// อลูมิเนียมคิดตาม "เส้นเต็มที่ต้องสั่งจริง" (จากแผนตัด) ไม่ใช่เมตรที่ใช้
+// =====================================================================
+function _bomDate() {
+  try { return new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }); }
+  catch (e) { return new Date().toLocaleDateString(); }
+}
+
+function buildBom(E) {
+  // ① อลูมิเนียม — มาจาก EXPORT.order (จำนวนเส้นเต็มจากแผนตัด)
+  const alum = E.order.map(o => ({ code: o.code, name: o.name, brand: o.brand, pieces: o.pieces, bars: o.bars, kg: o.kg, pricePerBar: o.pricePerBar, cost: o.cost }));
+
+  // ② อุปกรณ์ — รวมข้ามทุกชุด (× จำนวนชุด)
+  const hwMap = {};
+  E.units.forEach(u => (u.hardware || []).forEach(h => {
+    const k = h.name + '|' + h.unit + '|' + h.price;
+    if (!hwMap[k]) hwMap[k] = { name: h.name, unit: h.unit, price: h.price, qty: 0 };
+    hwMap[k].qty += h.qty * u.qty;
+  }));
+  const hw = Object.keys(hwMap).map(k => {
+    const h = hwMap[k];
+    const qty = Math.round(h.qty * 10) / 10;
+    return { name: h.name, unit: h.unit, price: h.price, qty, cost: qty * h.price };
+  }).sort((a, b) => b.cost - a.cost || a.name.localeCompare(b.name, 'th'));
+
+  // ③ กระจก — จัดกลุ่มตามชนิด/ราคา
+  const glMap = {};
+  E.units.forEach(u => {
+    const nm = u.glassName || 'กระจก';
+    const k = nm + '|' + u.glassPrice;
+    if (!glMap[k]) glMap[k] = { name: nm, price: u.glassPrice || 0, ft: 0, cost: 0, items: [] };
+    const g = glMap[k];
+    g.ft += u.glassFt * u.qty;
+    g.cost += u.glassCost * u.qty;
+    const pan = (u.glassPanels && u.glassPanels.length) ? u.glassPanels[0] : null;
+    g.items.push({ ref: u.ref, type: u.type, W: u.W, H: u.H, qty: u.qty, ft: u.glassFt * u.qty, panel: (pan && pan.w && pan.h) ? pan : null });
+  });
+  const glass = Object.keys(glMap).map(k => glMap[k]).sort((a, b) => b.cost - a.cost);
+
+  const sum = {
+    alumBars: alum.reduce((t, o) => t + o.bars, 0),
+    alumKg: alum.reduce((t, o) => t + o.kg, 0),
+    alumCost: alum.reduce((t, o) => t + o.cost, 0),
+    hwLines: hw.length,
+    hwCost: hw.reduce((t, h) => t + h.cost, 0),
+    glassFt: glass.reduce((t, g) => t + g.ft, 0),
+    glassCost: glass.reduce((t, g) => t + g.cost, 0)
+  };
+  sum.total = sum.alumCost + sum.hwCost + sum.glassCost;
+  return { alum, hw, glass, sum, date: _bomDate() };
+}
+
+function bomHidePrice() {
+  const el = document.getElementById('bomHidePrice');
+  return !!(el && el.checked);
+}
+
+function renderBom() {
+  const box = document.getElementById('bomResult');
+  if (!box || !lastExport || !lastExport.bom) return;
+  const E = lastExport, b = E.bom, st = E.settings;
+  const hide = bomHidePrice();
+  const nSets = E.units.reduce((t, u) => t + u.qty, 0);
+
+  document.getElementById('bomResultTitle').textContent = '📦 BOM สั่งของ — ' + E.projName;
+
+  let html = '<div class="bom-meta">' +
+    '<span>วันที่ <b>' + b.date + '</b></span>' +
+    '<span>โครงการ <b>' + escapeHtml(E.projName) + '</b></span>' +
+    '<span>จำนวน <b>' + fmtInt(nSets) + '</b> ชุด</span>' +
+    '<span>เส้นเต็ม <b>' + fmtInt(st.stockLen) + '</b> mm</span>' +
+    (hide ? '' : '<span>อลูมิเนียม <b>' + fmt(st.pricePerKg, 0) + '</b> ฿/กก.</span>') +
+    '</div>';
+
+  // ---- ① อลูมิเนียม (แยกตามแบรนด์ = แยกใบสั่งตามผู้ขาย) ----
+  const byBrand = {};
+  b.alum.forEach(o => { (byBrand[o.brand] = byBrand[o.brand] || []).push(o); });
+  let alumHtml = '';
+  Object.keys(byBrand).sort().forEach(brand => {
+    const list = byBrand[brand];
+    const bars = list.reduce((t, o) => t + o.bars, 0);
+    const kg = list.reduce((t, o) => t + o.kg, 0);
+    const cost = list.reduce((t, o) => t + o.cost, 0);
+    const rows = list.map((o, i) =>
+      '<tr><td class="center">' + (i + 1) + '</td>' +
+      '<td>' + profThumbHtml(brand + '|' + o.code) + '<b>' + o.code + '</b></td>' +
+      '<td>' + o.name + '</td>' +
+      '<td class="center"><strong>' + fmtInt(o.bars) + '</strong></td>' +
+      '<td class="num">' + fmt(o.kg) + '</td>' +
+      (hide ? '' : '<td class="num">' + fmt(o.pricePerBar) + '</td><td class="num">' + fmt(o.cost) + '</td>') +
+      '</tr>'
+    ).join('');
+    alumHtml += '<div class="bom-sub">' + brand + ' — ' + list.length + ' รหัส</div>' +
+      '<table><thead><tr><th class="center">#</th><th>รหัส</th><th>ชื่อโปรไฟล์</th>' +
+      '<th class="center">สั่ง (เส้น)</th><th class="num">นน. (กก.)</th>' +
+      (hide ? '' : '<th class="num">฿/เส้น</th><th class="num">รวม (฿)</th>') +
+      '</tr></thead><tbody>' + rows +
+      '<tr class="bom-total"><td colspan="3">รวม ' + brand + '</td>' +
+      '<td class="center">' + fmtInt(bars) + '</td><td class="num">' + fmt(kg) + '</td>' +
+      (hide ? '' : '<td></td><td class="num">' + fmt(cost) + '</td>') +
+      '</tr></tbody></table>';
+  });
+  html += '<div class="bom-sec"><div class="bom-sec-head"><h3>① อลูมิเนียม (สั่งเป็นเส้นเต็ม ' + fmtInt(st.stockLen) + ' mm)</h3>' +
+    '<div class="sub">' + fmtInt(b.sum.alumBars) + ' เส้น · ' + fmt(b.sum.alumKg) + ' กก.' + (hide ? '' : ' · ' + fmt(b.sum.alumCost) + ' ฿') + '</div></div>' +
+    (alumHtml || '<p class="bom-note">ไม่มีรายการ</p>') +
+    '<p class="bom-note">* จำนวนเส้นมาจากแผนตัดจริง (First-Fit Decreasing) รวมเศษที่เหลือแล้ว — สั่งตามนี้ตัดได้ครบทุกชิ้น</p>' +
+    '</div>';
+
+  // ---- ② อุปกรณ์ ----
+  let hwHtml;
+  if (b.hw.length) {
+    const rows = b.hw.map((h, i) =>
+      '<tr><td class="center">' + (i + 1) + '</td><td>' + h.name + '</td>' +
+      '<td class="center"><strong>' + fmt(h.qty, h.qty % 1 ? 1 : 0) + '</strong> ' + h.unit + '</td>' +
+      (hide ? '' : '<td class="num">' + fmt(h.price, 0) + '</td><td class="num">' + fmt(h.cost) + '</td>') +
+      '</tr>'
+    ).join('');
+    hwHtml = '<table><thead><tr><th class="center">#</th><th>รายการ</th><th class="center">จำนวน</th>' +
+      (hide ? '' : '<th class="num">฿/หน่วย</th><th class="num">รวม (฿)</th>') +
+      '</tr></thead><tbody>' + rows +
+      '<tr class="bom-total"><td colspan="2">รวมอุปกรณ์</td><td class="center">' + b.hw.length + ' รายการ</td>' +
+      (hide ? '' : '<td></td><td class="num">' + fmt(b.sum.hwCost) + '</td>') +
+      '</tr></tbody></table>';
+  } else {
+    hwHtml = '<p class="bom-note">⚠️ ยังไม่มีข้อมูลอุปกรณ์สำหรับบานในโครงการนี้ — เทมเพลต FUJI ยังไม่ได้ใส่รายการอุปกรณ์ (บาน SMS มีครบ) ต้องสั่งอุปกรณ์แยกเอง</p>';
+  }
+  html += '<div class="bom-sec"><div class="bom-sec-head"><h3>② อุปกรณ์ / ฮาร์ดแวร์</h3>' +
+    '<div class="sub">' + b.hw.length + ' รายการ' + (hide ? '' : ' · ' + fmt(b.sum.hwCost) + ' ฿') + '</div></div>' + hwHtml + '</div>';
+
+  // ---- ③ กระจก ----
+  let glassHtml = '';
+  b.glass.forEach(g => {
+    const rows = g.items.map((it, i) =>
+      '<tr><td class="center">' + (i + 1) + '</td><td><b>' + escapeHtml(it.ref || '-') + '</b> ' + escapeHtml(it.type || '') + '</td>' +
+      '<td class="num">' + fmtInt(it.W) + '×' + fmtInt(it.H) + '</td>' +
+      '<td class="center">' + fmtInt(it.qty) + '</td>' +
+      '<td class="num">' + (it.panel ? fmtInt(it.panel.w) + '×' + fmtInt(it.panel.h) : '—') + '</td>' +
+      '<td class="num">' + fmt(it.ft, 1) + '</td></tr>'
+    ).join('');
+    glassHtml += '<div class="bom-sub">' + escapeHtml(g.name) + (hide ? '' : ' — ' + fmt(g.price, 0) + ' ฿/ฟุต') + '</div>' +
+      '<table><thead><tr><th class="center">#</th><th>ตำแหน่ง / ชนิดบาน</th><th class="num">ขนาดบาน (mm)</th>' +
+      '<th class="center">ชุด</th><th class="num">ขนาดกระจก/แผ่น (mm)</th><th class="num">ฟุต</th></tr></thead><tbody>' + rows +
+      '<tr class="bom-total"><td colspan="5">รวม ' + escapeHtml(g.name) + (hide ? '' : ' (' + fmt(g.cost) + ' ฿)') + '</td>' +
+      '<td class="num">' + fmt(g.ft, 1) + '</td></tr></tbody></table>';
+  });
+  html += '<div class="bom-sec"><div class="bom-sec-head"><h3>③ กระจก</h3>' +
+    '<div class="sub">' + fmt(b.sum.glassFt, 1) + ' ฟุต' + (hide ? '' : ' · ' + fmt(b.sum.glassCost) + ' ฿') + '</div></div>' +
+    (glassHtml || '<p class="bom-note">ไม่มีรายการ</p>') +
+    '<p class="bom-note">* ฟุต = กว้าง(ม.) × สูง(ม.) × 12 ตามวิธีคิดในไฟล์ประเมินราคา | ขนาดกระจก/แผ่น เป็นค่าจากสูตรเทมเพลต ใช้อ้างอิงเบื้องต้น — ยืนยันกับหน้างานก่อนสั่งตัดจริง</p>' +
+    '</div>';
+
+  // ---- สรุป ----
+  if (!hide) {
+    html += '<div class="summary" style="margin-top:1.75rem;"><h3>💰 สรุปยอดสั่งซื้อ — ' + escapeHtml(E.projName) + '</h3><div class="summary-grid">' +
+      '<div class="summary-item"><div class="label">อลูมิเนียม (เต็มเส้น)</div><div class="value">' + fmt(b.sum.alumCost) + ' ฿</div></div>' +
+      '<div class="summary-item"><div class="label">อุปกรณ์</div><div class="value">' + fmt(b.sum.hwCost) + ' ฿</div></div>' +
+      '<div class="summary-item"><div class="label">กระจก</div><div class="value">' + fmt(b.sum.glassCost) + ' ฿</div></div>' +
+      '<div class="summary-item"><div class="label">รวมสั่งซื้อ</div><div class="value green">' + fmt(b.sum.total) + ' ฿</div></div>' +
+      '</div><p class="bom-note">* ยอดนี้เป็น "ต้นทุนซื้อของ" คิดอลูมิเนียมตามเส้นเต็มที่ต้องสั่ง จึงสูงกว่าค่าอลูมิเนียมในใบเสนอราคา (คิดตามเมตรที่ใช้จริง) ส่วนต่างคือมูลค่าเศษ</p></div>';
+  }
+
+  box.innerHTML = html;
 }
 
 // =====================================================================
@@ -1620,6 +1819,7 @@ function applyState(s) {
   unitSeq = s.unitSeq || (units.length + 1);
   document.getElementById('quoteResultCard').style.display = 'none';
   document.getElementById('cuttingResult').innerHTML = '<div class="empty-state"><div class="icon">✂️</div><p>ยังไม่ได้คำนวณ — เพิ่มชุดในหน้า "ใบเสนอราคา" แล้วกด ⚡ คำนวณ</p></div>';
+  document.getElementById('bomResult').innerHTML = '<div class="empty-state"><div class="icon">📦</div><p>ยังไม่ได้คำนวณ — เพิ่มชุดในหน้า "ใบเสนอราคา" แล้วกด ⚡ คำนวณ</p></div>';
   renderUnits();
   updateProjName();
   return true;
@@ -1730,6 +1930,7 @@ function newProject() {
   SETTINGS_FIELDS.forEach(f => { const el = document.getElementById(f); if (el) el.value = defaults[f]; });
   document.getElementById('quoteResultCard').style.display = 'none';
   document.getElementById('cuttingResult').innerHTML = '<div class="empty-state"><div class="icon">✂️</div><p>ยังไม่ได้คำนวณ — เพิ่มชุดในหน้า "ใบเสนอราคา" แล้วกด ⚡ คำนวณ</p></div>';
+  document.getElementById('bomResult').innerHTML = '<div class="empty-state"><div class="icon">📦</div><p>ยังไม่ได้คำนวณ — เพิ่มชุดในหน้า "ใบเสนอราคา" แล้วกด ⚡ คำนวณ</p></div>';
   renderUnits();
   switchTab('quote');
 }
@@ -1883,6 +2084,85 @@ function _cuttingSheet(E) {
     rows.push(_row([]));
   });
   return _sheet('แผนตัด', [55, 45, 620, 80], rows);
+}
+
+function _bomSheet(E) {
+  const b = E.bom, st = E.settings;
+  const hide = bomHidePrice();
+  const rows = [];
+  const nSets = E.units.reduce((t, u) => t + u.qty, 0);
+  rows.push(_row([_cell('BOM / ใบขอซื้อ — ' + E.projName, { style: 'title', merge: 6 })]));
+  rows.push(_row([_cell('วันที่ ' + b.date + ' | ' + fmtInt(nSets) + ' ชุด | เส้นเต็ม ' + fmtInt(st.stockLen) + ' mm' + (hide ? '' : ' | อลูมิเนียม ' + fmt(st.pricePerKg, 0) + ' ฿/กก.'), { style: 'sub', merge: 6 })]));
+  rows.push(_row([]));
+
+  // ① อลูมิเนียม
+  rows.push(_row([_cell('① อลูมิเนียม (สั่งเป็นเส้นเต็ม)', { style: 'grp', merge: 6 })]));
+  const ah = ['#', 'รหัส', 'ชื่อโปรไฟล์', 'แบรนด์', 'สั่ง (เส้น)', 'นน. (กก.)'];
+  if (!hide) { ah.push('฿/เส้น'); ah.push('รวม (฿)'); }
+  rows.push(_row(ah.map(x => _cell(x, { style: 'hdr' }))));
+  b.alum.forEach((o, i) => {
+    const c = [_cell(i + 1, { num: true, style: 'int' }), _cell(o.code, { style: 'bold' }), _cell(o.name), _cell(o.brand),
+      _cell(o.bars, { num: true, style: 'int' }), _cell(o.kg, { num: true, style: 'num' })];
+    if (!hide) { c.push(_cell(o.pricePerBar, { num: true, style: 'num' })); c.push(_cell(o.cost, { num: true, style: 'num' })); }
+    rows.push(_row(c));
+  });
+  const at = [_cell('รวมอลูมิเนียม', { style: 'total' }), _cell('', { style: 'total' }), _cell('', { style: 'total' }), _cell('', { style: 'total' }),
+    _cell(b.sum.alumBars, { num: true, style: 'totalN' }), _cell(b.sum.alumKg, { num: true, style: 'totalN' })];
+  if (!hide) { at.push(_cell('', { style: 'total' })); at.push(_cell(b.sum.alumCost, { num: true, style: 'totalN' })); }
+  rows.push(_row(at));
+  rows.push(_row([]));
+
+  // ② อุปกรณ์
+  rows.push(_row([_cell('② อุปกรณ์ / ฮาร์ดแวร์', { style: 'grp', merge: 6 })]));
+  if (b.hw.length) {
+    const hh = ['#', 'รายการ', 'จำนวน', 'หน่วย'];
+    if (!hide) { hh.push('฿/หน่วย'); hh.push('รวม (฿)'); }
+    rows.push(_row(hh.map(x => _cell(x, { style: 'hdr' }))));
+    b.hw.forEach((h, i) => {
+      const c = [_cell(i + 1, { num: true, style: 'int' }), _cell(h.name), _cell(h.qty, { num: true, style: 'num' }), _cell(h.unit)];
+      if (!hide) { c.push(_cell(h.price, { num: true, style: 'num' })); c.push(_cell(h.cost, { num: true, style: 'num' })); }
+      rows.push(_row(c));
+    });
+    if (!hide) {
+      rows.push(_row([_cell('รวมอุปกรณ์', { style: 'total' }), _cell('', { style: 'total' }), _cell('', { style: 'total' }), _cell('', { style: 'total' }),
+        _cell('', { style: 'total' }), _cell(b.sum.hwCost, { num: true, style: 'totalN' })]));
+    }
+  } else {
+    rows.push(_row([_cell('ยังไม่มีข้อมูลอุปกรณ์สำหรับบานในโครงการนี้ (เทมเพลต FUJI ยังไม่ได้ใส่รายการอุปกรณ์) — ต้องสั่งแยกเอง', { style: 'sub', merge: 6 })]));
+  }
+  rows.push(_row([]));
+
+  // ③ กระจก
+  rows.push(_row([_cell('③ กระจก', { style: 'grp', merge: 6 })]));
+  b.glass.forEach(g => {
+    rows.push(_row([_cell(g.name + (hide ? '' : '  (' + fmt(g.price, 0) + ' ฿/ฟุต)'), { style: 'bold', merge: 5 })]));
+    rows.push(_row(['#', 'ตำแหน่ง / ชนิดบาน', 'ขนาดบาน (mm)', 'ชุด', 'ขนาดกระจก/แผ่น (mm)', 'ฟุต'].map(x => _cell(x, { style: 'hdr' }))));
+    g.items.forEach((it, i) => rows.push(_row([
+      _cell(i + 1, { num: true, style: 'int' }), _cell((it.ref || '-') + ' ' + (it.type || '')),
+      _cell(fmtInt(it.W) + '×' + fmtInt(it.H)), _cell(it.qty, { num: true, style: 'int' }),
+      _cell(it.panel ? fmtInt(it.panel.w) + '×' + fmtInt(it.panel.h) : '—'), _cell(it.ft, { num: true, style: 'num' })
+    ])));
+    rows.push(_row([_cell('รวม ' + g.name, { style: 'total' }), _cell('', { style: 'total' }), _cell('', { style: 'total' }), _cell('', { style: 'total' }),
+      _cell(hide ? '' : fmt(g.cost) + ' ฿', { style: 'total' }), _cell(g.ft, { num: true, style: 'totalN' })]));
+    rows.push(_row([]));
+  });
+
+  // สรุป
+  if (!hide) {
+    rows.push(_row([_cell('💰 สรุปยอดสั่งซื้อ', { style: 'title', merge: 5 })]));
+    const sl = (label, val, sty) => _row([_cell(label, { style: 'bold' }), _cell(val, { num: true, style: sty || 'num' })]);
+    rows.push(sl('อลูมิเนียม (เต็มเส้น)', b.sum.alumCost));
+    rows.push(sl('อุปกรณ์', b.sum.hwCost));
+    rows.push(sl('กระจก', b.sum.glassCost));
+    rows.push(sl('รวมสั่งซื้อ', b.sum.total, 'big'));
+    rows.push(_row([_cell('* คิดอลูมิเนียมตามเส้นเต็มที่ต้องสั่ง จึงสูงกว่าค่าอลูมิเนียมในใบเสนอราคาที่คิดตามเมตรที่ใช้จริง (ส่วนต่าง = มูลค่าเศษ)', { style: 'sub', merge: 5 })]));
+  }
+  return _sheet('BOM สั่งของ', [40, 130, 260, 70, 80, 90, 90, 90], rows);
+}
+
+function exportBomXls() {
+  if (!lastExport) { alert('กรุณากด ⚡ คำนวณ ก่อน แล้วจึง Export'); return; }
+  _downloadXls(_fnameXls('BOM'), _bomSheet(lastExport));
 }
 
 function exportQuotationXls() {
