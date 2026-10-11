@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Cutting Optimizer Pro v2 — ถอดรายการตัดประกอบ + ประเมินราคา</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
@@ -510,9 +510,131 @@ details.settings-more[open] > summary { margin-bottom: 0.6rem; }
 #dzModal .dz-sheet svg { max-height: calc(100vh - 300px); }
 #dzModal .dz-pieces { max-height: 340px; }
 @media (max-width: 900px) { #dzModal .dz-wrap { grid-template-columns: 1fr; } }
+/* =====================================================================
+   โหมดมือถือ (body.m-ui) — ทุกกฎอยู่ใต้ body.m-ui จึงไม่กระทบหน้าคอม
+   แถบเมนูล่าง · ปุ่มวาดบานลอย · หน้าวาดบานเต็มจอแบบแอป · ตารางเลื่อนในกรอบ
+   ===================================================================== */
+.m-bar, .m-fab, .m-menu-btn { display: none; }
+body.m-ui { --m-bar-h: 62px; }
+body.m-ui .container { padding: 0 12px calc(var(--m-bar-h) + 84px + env(safe-area-inset-bottom, 0px)); }
+body.m-ui .tab-nav { display: none !important; }
+body.m-ui .layout { display: block; }
+/* --- แถบบน: โลโก้ + ชื่อโครงการ · ปุ่มคำสั่งย้ายไปเมนู ⋯ --- */
+body.m-ui .topbar { position: relative; padding-top: calc(8px + env(safe-area-inset-top, 0px)); gap: .5rem; flex-wrap: nowrap; }
+body.m-ui .brand h1 small { display: none; }
+body.m-ui .brand h1 { font-size: .95rem; }
+body.m-ui .brand .logo { width: 30px; height: 30px; }
+body.m-ui .pb-left { gap: .45rem; flex-wrap: wrap; }
+body.m-ui .pb-projname { font-size: .85rem; max-width: 46vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body.m-ui .pb-status { font-size: .7rem; }
+body.m-ui .m-menu-btn { display: grid; place-items: center; flex: 0 0 44px; height: 44px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text-strong); font-size: 1.4rem; line-height: 1; cursor: pointer; }
+body.m-ui .pb-right { display: none; }
+body.m-ui.m-menu-open .pb-right { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem; position: absolute; right: 0; top: calc(100% + 4px); z-index: 95; width: min(300px, 92vw);
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: .6rem; box-shadow: 0 12px 32px rgba(15,23,42,.22); }
+body.m-ui.m-menu-open .pb-right .btn { min-height: 44px; font-size: .92rem; justify-content: center; }
+body.m-ui.m-menu-open .pb-right #uiToggle { grid-column: span 2; }
+/* --- แถบเมนูล่าง --- */
+body.m-ui .m-bar { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
+  padding: 4px 4px env(safe-area-inset-bottom, 0px); background: var(--card); border-top: 1px solid var(--border); box-shadow: 0 -4px 18px rgba(15,23,42,.08); }
+body.m-ui .m-bar button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; min-height: 54px; border: 0; background: none; color: var(--muted); font: inherit; font-size: .7rem; cursor: pointer; border-radius: 10px; }
+body.m-ui .m-bar button span { font-size: 1.25rem; line-height: 1.1; filter: grayscale(.6); opacity: .8; }
+body.m-ui .m-bar button.on { color: var(--primary); background: var(--primary-subtle); }
+body.m-ui .m-bar button.on span { filter: none; opacity: 1; }
+body.m-ui .m-fab { display: none; position: fixed; right: 14px; bottom: calc(var(--m-bar-h) + 14px + env(safe-area-inset-bottom, 0px)); z-index: 89;
+  padding: .85rem 1.15rem; border: 0; border-radius: 999px; background: var(--primary); color: #fff; font: inherit; font-size: 1rem; box-shadow: 0 8px 22px rgba(37,99,235,.35); cursor: pointer; }
+body.m-ui:has(#tab-project.active) .m-fab { display: block; }
+body.m-ui:has(.modal-overlay.open) .m-bar, body.m-ui:has(.modal-overlay.open) .m-fab { display: none; }
+body.m-ui:has(.modal-overlay.open) { overflow: hidden; }
+/* --- ทั่วไป: การ์ด ปุ่ม ช่องกรอก (≥16px กันมือถือซูม) --- */
+body.m-ui .card { padding: .9rem; border-radius: 12px; }
+body.m-ui input, body.m-ui select, body.m-ui textarea { font-size: 16px !important; }
+body.m-ui .btn { min-height: 42px; }
+body.m-ui .toolbar { flex-wrap: wrap; gap: .4rem; }
+body.m-ui .grid-form { grid-template-columns: 1fr 1fr !important; }
+body.m-ui .grid-form .input-group { grid-column: auto !important; }
+/* --- หน้าโครงการ --- */
+body.m-ui .proj-head { flex-direction: column; align-items: stretch; }
+body.m-ui .proj-head .proj-name { flex: 0 0 auto; }
+body.m-ui .uc-thumb { width: 78px; height: 58px; }
+body.m-ui .uc-act { margin-left: auto; }
+body.m-ui .unit-head .btn-draw { display: none; }
+body.m-ui .unit-cards { grid-template-columns: 1fr; }
+body.m-ui .unit-card { padding: .65rem; }
+body.m-ui .uc-act { flex-direction: row; gap: .2rem; }
+body.m-ui .uc-act button { min-width: 40px; min-height: 40px; font-size: 1.1rem; }
+body.m-ui .unit-card { flex-wrap: nowrap; align-items: flex-start; }
+body.m-ui .uc-body { flex: 1 1 auto; min-width: 0; }
+body.m-ui .uc-act { flex-direction: column; }
+/* --- ตารางในหน้าผลลัพธ์: เลื่อนซ้าย-ขวาในกรอบ หน้าไม่ล้น --- */
+body.m-ui #cuttingResult table, body.m-ui #bomResult table, body.m-ui #quoteInternal table, body.m-ui #unitList table, body.m-ui .brand-sub table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; }
+body.m-ui .compare-box, body.m-ui .summary-grid, body.m-ui .grid-2 { grid-template-columns: 1fr !important; }
+body.m-ui .profile-block-header { flex-wrap: wrap; gap: .4rem; }
+body.m-ui .bar-label { font-size: .72rem; }
+/* --- ใบเสนอราคา: ปุ่มคำสั่งติดบน · หมวดกรอกพับได้ · A4 ย่อพอดีจอ --- */
+body.m-ui .quote-layout { display: flex; flex-direction: column; gap: .7rem; }
+body.m-ui .quote-layout > * { min-width: 0; width: 100%; }
+body.m-ui .a4-wrap { width: 100%; justify-content: flex-start; }
+body.m-ui .quote-controls { position: static; max-height: none; overflow: visible; }
+body.m-ui .qc-top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; }
+body.m-ui .qc-actions .btn { min-height: 44px; }
+body.m-ui .qi-grid { grid-template-columns: 1fr; }
+body.m-ui .a4 { box-shadow: 0 2px 10px rgba(15,23,42,.12); }
+/* --- หน้าวาดบาน (เต็มจอแบบแอป) --- */
+body.m-ui #dzModal .dz-modal { height: 100vh; height: 100dvh; }
+body.m-ui #dzModal .modal-head { padding: calc(.55rem + env(safe-area-inset-top, 0px)) .8rem .55rem; }
+body.m-ui #dzModal .modal-head h3 { font-size: .92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body.m-ui #dzModal .modal-close { min-width: 44px; min-height: 44px; }
+body.m-ui .dz-steps { padding: .4rem .6rem; gap: .3rem; }
+body.m-ui .dz-steps button { padding: .4rem .3rem; font-size: .78rem; flex-direction: column; gap: 2px; }
+body.m-ui #dzModal .modal-body { padding: .6rem .7rem 1rem; overscroll-behavior: contain; }
+body.m-ui #dzModal .dz-wrap { grid-template-columns: minmax(0, 1fr); gap: .7rem; }
+body.m-ui #dzModal .dz-wrap > *, body.m-ui .dz-box { min-width: 0; }
+body.m-ui .dz-brands { grid-template-columns: 1fr; }
+body.m-ui .dz-sheet svg { max-height: 46vh; max-height: 46dvh; touch-action: pan-y; }
+body.m-ui #dzHW, body.m-ui #dzHH { touch-action: none; }
+body.m-ui .dz-dimedit { font-size: 16px !important; }
+body.m-ui .dz-view { font-size: .85rem; padding: .35rem .6rem; }
+body.m-ui .dz-tools { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; scrollbar-width: thin; }
+body.m-ui .dz-tools .dz-tb, body.m-ui .dz-tools .lbl { flex: 0 0 auto; }
+body.m-ui .dz-tb { min-height: 40px; }
+body.m-ui .dz-fields { grid-template-columns: 1fr 1fr; }
+body.m-ui .dz-presets { grid-template-columns: repeat(3, 1fr); }
+body.m-ui .dz-map { grid-template-columns: 1fr; }
+body.m-ui .dz-row input { width: 84px; }
+/* รายการตัด → การ์ดทีละชิ้น: แถว 1 รหัส · แถว 2 ชื่อชิ้น + ยาว + จำนวน + ปุ่ม */
+body.m-ui .dz-pieces, body.m-ui #dzModal .dz-pieces { max-height: none; overflow: visible; }
+body.m-ui .dz-pieces table, body.m-ui .dz-pieces tbody { display: block; }
+body.m-ui .dz-pieces thead { display: none; }
+body.m-ui .dz-pieces tr { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: 6px 6px; align-items: center; padding: .55rem 0; border-bottom: 1px solid var(--border); }
+body.m-ui .dz-pieces td { display: block; padding: 0; border: 0; white-space: normal; width: auto !important; }
+body.m-ui .dz-pieces td:first-child { grid-column: 1 / -1; }
+body.m-ui .dz-pieces select { width: 100%; min-width: 0; max-width: none; min-height: 40px; }
+body.m-ui .dz-pieces .pc-num { width: 76px; min-height: 40px; }
+body.m-ui .dz-pieces .pc-num.q { width: 56px; }
+body.m-ui .dz-pieces .dz-ovx { min-width: 34px; min-height: 40px; font-size: 1.05rem; }
+body.m-ui .dz-pieces tr.ov td, body.m-ui .dz-pieces tr.xrow td { background: none; }
+body.m-ui .dz-pieces tr.ov { background: rgba(255, 193, 7, .12); }
+body.m-ui .dz-pieces tr.xrow { background: rgba(59, 130, 246, .07); }
+body.m-ui .dz-addrow { width: 100%; min-height: 44px; }
+body.m-ui .dz-pospanel select { min-height: 40px; }
+body.m-ui .dz-foot { flex-wrap: wrap; gap: .4rem; padding: .55rem .7rem calc(.55rem + env(safe-area-inset-bottom, 0px)); }
+body.m-ui .dz-foot .note { display: none; }
+body.m-ui .dz-foot .btn { flex: 1 1 auto; min-height: 46px; }
+body.m-ui .dz-3d-stage { min-height: 260px; }
+/* --- หน้าต่างอื่น (เปิดโครงการ / แบบประกอบ) เต็มจอ --- */
+body.m-ui .modal-overlay { padding: 0; }
+body.m-ui .modal:not(.dz-modal) { max-width: none; width: 100vw; max-height: 100vh; max-height: 100dvh; height: 100dvh; border-radius: 0; }
+body.m-ui .asm-view { grid-template-columns: 1fr !important; }
+
 </style>
 </head>
 <body>
+<script>
+// โหมดหน้าจอ: auto (จอ ≤ 820px = มือถือ) | desktop | mobile — ตั้ง class ก่อนวาดหน้าแรก กันกะพริบ
+(function () { var pref = "auto"; try { pref = localStorage.getItem("cop_v2_ui") || "auto"; } catch (e) {}
+  var m = pref === "mobile" || (pref === "auto" && window.matchMedia("(max-width: 820px)").matches);
+  if (m) document.body.classList.add("m-ui"); })();
+</script>
 <div class="container">
 
   <div class="topbar">
@@ -521,12 +643,14 @@ details.settings-more[open] > summary { margin-bottom: 0.6rem; }
       <span class="pb-projname" id="pbProjName">โครงการใหม่</span>
       <span class="pb-status" id="saveStatus"><span class="dot"></span> บันทึกอัตโนมัติ</span>
     </div>
+    <button class="m-menu-btn" id="mMenuBtn" onclick="document.body.classList.toggle('m-menu-open')" aria-label="เมนู">⋯</button>
     <div class="pb-right">
       <button class="btn btn-secondary btn-sm" onclick="newProject()">🆕 ใหม่</button>
       <button class="btn btn-secondary btn-sm" onclick="saveProjectPrompt()">💾 บันทึก</button>
       <button class="btn btn-secondary btn-sm" onclick="openProjectsModal()">📂 เปิด</button>
       <button class="btn btn-secondary btn-sm" onclick="exportProject()">⬇ ไฟล์</button>
       <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">⬆ นำเข้า</button>
+      <button class="btn btn-secondary btn-sm" id="uiToggle" onclick="toggleUiMode()" title="สลับหน้าจอแบบคอม / แบบมือถือ">📱 แบบมือถือ</button>
       <input type="file" id="importFile" accept=".json,application/json" onchange="importProject(event)">
     </div>
   </div>
@@ -801,6 +925,15 @@ details.settings-more[open] > summary { margin-bottom: 0.6rem; }
   </div><!-- /tab-brand -->
   </div><!-- /main -->
   </div><!-- /layout -->
+  <!-- ===== มือถือ: แถบเมนูล่าง + ปุ่มวาดบานลอย (แสดงเฉพาะ body.m-ui) ===== -->
+  <nav class="m-bar" id="mBar">
+    <button data-tab="project" class="on"><span>🏗️</span>โครงการ</button>
+    <button data-tab="quote"><span>📄</span>ใบเสนอราคา</button>
+    <button data-tab="cut"><span>✂️</span>แผนตัด</button>
+    <button data-tab="bom"><span>📦</span>BOM</button>
+    <button data-tab="brand"><span>🏷️</span>แบรนด์</button>
+  </nav>
+  <button class="m-fab" id="mFab" onclick="openDesigner()" aria-label="วาดบานใหม่">＋ วาดบาน</button>
 
 </div>
 
@@ -2048,13 +2181,35 @@ function renderBom() {
 // =====================================================================
 // TABS
 // =====================================================================
+// ===== โหมดหน้าจอ คอม / มือถือ (ลิงก์เดียวกัน) =====
+const UI_MQ = window.matchMedia("(max-width: 820px)");
+function uiPref() { try { return localStorage.getItem("cop_v2_ui") || "auto"; } catch (e) { return "auto"; } }
+function applyUiMode() {
+  const pref = uiPref(), m = pref === "mobile" || (pref === "auto" && UI_MQ.matches);
+  document.body.classList.toggle("m-ui", m); document.body.classList.remove("m-menu-open");
+  const t = document.getElementById("uiToggle"); if (t) t.textContent = m ? "🖥 แบบคอม" : "📱 แบบมือถือ";
+  if (m) document.querySelectorAll("#quoteControls .qc-sec").forEach((d, i) => { if (!d.dataset.mInit) { d.dataset.mInit = 1; if (!/ราคา/.test(d.querySelector("summary").textContent)) d.open = false; } });
+  if (typeof dz !== "undefined" && dz && document.getElementById("dzModal").classList.contains("open")) dzRender();
+  requestAnimationFrame(() => typeof fitA4 === "function" && fitA4());
+}
+function toggleUiMode() {
+  const nowMobile = document.body.classList.contains("m-ui");
+  // สลับไปโหมดตรงข้าม · ถ้าตรงกับที่จออัตโนมัติจะเลือกอยู่แล้ว กลับเป็น auto
+  const want = nowMobile ? "desktop" : "mobile", auto = UI_MQ.matches ? "mobile" : "desktop";
+  try { localStorage.setItem("cop_v2_ui", want === auto ? "auto" : want); } catch (e) {}
+  applyUiMode();
+}
+UI_MQ.addEventListener ? UI_MQ.addEventListener("change", applyUiMode) : UI_MQ.addListener(applyUiMode);
 function switchTab(name) {
+  document.querySelectorAll("#mBar button").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
+  document.body.classList.remove("m-menu-open");
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   document.getElementById('tabbtn-' + name).classList.add('active');
   if ((name === 'quote' || name === 'cut' || name === 'bom') && calcDirty && hasItems()) calculate(true);
   if (name === 'brand' && document.getElementById('brand-fuji').classList.contains('active')) renderFujiCat();
+  if (name === 'quote') requestAnimationFrame(() => typeof fitA4 === 'function' && fitA4());
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 // แท็บ "แบรนด์อลูมิเนียม" — สลับระหว่าง FUJI (฿/กก.) กับ ORM (ต่อเส้นตามสี)
@@ -3133,12 +3288,14 @@ function saveDesigner() {
 // ---------- modal rendering ----------
 function dzRender() {
   const svg = document.getElementById('dzSvg'), W = dz.W, H = dz.H, nrows = dz.rows.length;
-  const padT = 120 + nrows * 130, padL = 140 + (nrows > 1 ? 200 : 0);
-  svg.setAttribute('viewBox', `${-padL} ${-padT} ${W + padL + 300} ${H + padT + 200}`);
+  const kp = document.body.classList.contains('m-ui') ? 1.35 : 1; // มือถือ: ป้ายตัวเลขใหญ่ขึ้น → เผื่อขอบรอบรูปตาม
+  const padT = (120 + nrows * 130) * kp, padL = (140 + (nrows > 1 ? 200 : 0)) * kp;
+  svg.setAttribute('viewBox', `${-padL} ${-padT} ${W + padL + 300 * kp} ${H + padT + 200 * kp}`);
   let s = '<rect x="-9999" y="-9999" width="99999" height="99999" fill="#fff"/>' + dzDrawSvg(dz, dzStep === 3 ? null : dzSel, dzOutside, false);
   const fmtN = n => (+n).toLocaleString('en-US', { maximumFractionDigits: 2 });
   const dim = (x1, y1, x2, y2, txt, key, big) => {
-    const vert = x1 === x2, mx = (x1 + x2) / 2, my = (y1 + y2) / 2, fs = big ? 72 : 54, bw = Math.max(big ? 300 : 220, txt.length * (big ? 44 : 34) + 40), bh = big ? 110 : 84;
+    const k = document.body.classList.contains('m-ui') ? 1.35 : 1; // มือถือ: ป้ายตัวเลขใหญ่ขึ้น แตะง่าย
+    const vert = x1 === x2, mx = (x1 + x2) / 2, my = (y1 + y2) / 2, fs = (big ? 72 : 54) * k, bw = Math.max(big ? 300 : 220, txt.length * (big ? 44 : 34) + 40) * k, bh = (big ? 110 : 84) * k;
     let g = `<g stroke="#1c2230" stroke-width="2.5"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
     g += vert ? `<line x1="${x1 - 25}" y1="${y1}" x2="${x1 + 25}" y2="${y1}"/><line x1="${x2 - 25}" y1="${y2}" x2="${x2 + 25}" y2="${y2}"/>` : `<line x1="${x1}" y1="${y1 - 25}" x2="${x1}" y2="${y1 + 25}"/><line x1="${x2}" y1="${y2 - 25}" x2="${x2}" y2="${y2 + 25}"/>`;
     g += `</g><g data-dim="${key}" style="cursor:text"><rect x="${mx - bw / 2}" y="${my - bh / 2}" width="${bw}" height="${bh}" fill="${big ? '#bfe1ff' : '#e8f3ff'}"/><text x="${mx}" y="${my + fs * .36}" font-family="Kanit,Inter,sans-serif" font-size="${fs}" font-weight="600" text-anchor="middle" fill="#0b3d6b">${txt}</text></g>`;
@@ -3511,6 +3668,12 @@ function dz3Toggle(on) {
 document.getElementById('dz3dBtn').addEventListener('click', () => dz3Toggle(!dz3On));
 
 // ----- restore autosave + wire settings listeners on load -----
+(function mobileInit() { // แถบเมนูล่าง · พับ/กาง หมวดในหน้าใบเสนอราคา → ย่อ A4 ใหม่ · ตั้งข้อความปุ่มสลับโหมด
+  document.getElementById('mBar').addEventListener('click', e => { const b = e.target.closest('button[data-tab]'); if (b) switchTab(b.dataset.tab); });
+  document.querySelectorAll('#quoteControls details').forEach(d => d.addEventListener('toggle', () => requestAnimationFrame(fitA4)));
+  document.addEventListener('click', e => { if (document.body.classList.contains('m-menu-open') && !e.target.closest('#mMenuBtn')) document.body.classList.remove('m-menu-open'); });
+  applyUiMode();
+})();
 (function boot() {
   loadTplOverrides();
   SETTINGS_FIELDS.forEach(f => {
