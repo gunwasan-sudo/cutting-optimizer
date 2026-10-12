@@ -310,6 +310,9 @@ details.unit-detail summary:hover { color: var(--primary-glow); }
 .dz-pieces tr.xrow.off td { opacity: 1; text-decoration: none; }
 .dz-pieces tr.off td input { text-decoration: none; }
 .dz-addrow { margin-top: .5rem; }
+.dz-fold { margin-top: .4rem; }
+.dz-fold label { display: inline-flex; align-items: center; gap: .3rem; font-size: .82rem; color: var(--muted); }
+.dz-fold select { padding: .3rem .4rem; border: 1px solid var(--border-strong); border-radius: 7px; background: var(--card); color: var(--text); font: inherit; font-size: .86rem; }
 .dz-pieces .pc-name { font-size: .72rem; color: var(--muted); white-space: normal; line-height: 1.25; }
 .dz-pieces tr.ov td { background: rgba(255, 193, 7, .14); }
 .dz-pieces tr.off td { opacity: .5; text-decoration: line-through; }
@@ -480,6 +483,29 @@ details.settings-more[open] > summary { margin-bottom: 0.6rem; }
 .qd-totals td { text-align: right; padding: 1.3mm 0; font-variant-numeric: tabular-nums; border: 0; background: none; color: #111827; }
 .qd-totals .qd-grand th, .qd-totals .qd-grand td { font-weight: 700; font-size: 11.5pt; color: #fff; background: #1e3a8a !important; padding: 2.2mm 2.5mm; }
 .qd-terms { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; margin-top: 6mm; font-size: 9pt; padding-top: 4mm; border-top: 1px solid #e5e7eb; }
+.qd-spec { margin-top: 5mm; font-size: 9.2pt; }
+.qd-spec-g { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #e5e7eb; border-left: 1px solid #e5e7eb; }
+.qd-spec-g > div { display: grid; grid-template-columns: 38% 62%; border-right: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb; }
+.qd-spec-g span { padding: 1.2mm 2.5mm; color: #4b5563; background: #f8fafc; }
+.qd-spec-g b { padding: 1.2mm 2.5mm; font-weight: 600; color: #111827; }
+.qd-pay { width: 100%; border-collapse: collapse; border: 0; font-size: 9pt; margin: 1mm 0 2mm; }
+.qd-pay td { padding: 1mm 1.2mm; border: 0; border-bottom: 1px dotted #d1d5db; background: none; color: #1a1d23; }
+.qd-pay .c { white-space: nowrap; color: #4b5563; }
+.qd-pay .r { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.qd-bank { border: 1px solid #c7d2fe; background: #eef2ff; border-radius: 1.5mm; padding: 2mm 3mm; font-size: 9pt; }
+.qd-notes { margin: 0; padding-left: 5mm; }
+.qd-notes li { margin-bottom: .6mm; }
+.qd-dots { color: #9ca3af; letter-spacing: .05em; }
+.qd-warn { color: #b91c1c; background: #fef2f2; border: 1px solid #fecaca; border-radius: 1.5mm; padding: 1.2mm 2mm; margin: 1mm 0; font-size: 8.8pt; }
+.qt-pay { padding-bottom: .75rem; display: flex; flex-direction: column; gap: .35rem; }
+.qp-row { display: grid; grid-template-columns: 1.4rem minmax(0, 1fr) 4.2rem 1rem 1.8rem; gap: .3rem; align-items: center; }
+.qp-n { font-size: .75rem; color: var(--muted); text-align: center; }
+.qp-row input { width: 100%; padding: .38rem .45rem; font: inherit; font-size: .86rem; color: var(--text); background: var(--bg-elev); border: 1px solid var(--border); border-radius: 7px; min-width: 0; }
+.qp-row .qp-p { text-align: right; }
+.qp-pc { font-size: .78rem; color: var(--muted); }
+.qp-foot { display: flex; justify-content: space-between; align-items: center; gap: .5rem; margin-top: .2rem; }
+.qp-sum { font-size: .8rem; color: var(--muted); }
+.qp-sum.bad { color: var(--danger); font-weight: 600; }
 .qd-sign { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8mm; margin-top: auto; padding-top: 14mm; text-align: center; font-size: 9pt; page-break-inside: avoid; }
 .qd-line { border-bottom: 1px dotted #6b7280; height: 12mm; margin-bottom: 1.5mm; }
 @page { size: A4; margin: 8mm; }
@@ -491,6 +517,8 @@ details.settings-more[open] > summary { margin-bottom: 0.6rem; }
   body.print-quote .a4 { display: block; }
   body.print-quote .qd-sign { margin-top: 10mm; }
   body.print-quote .qt-items thead { display: table-header-group; }
+  body.print-quote .qd-warn { display: none !important; }
+  body.print-quote .qd-spec, body.print-quote .qd-pay, body.print-quote .qd-terms > div { page-break-inside: avoid; }
   body.print-quote .qt-items tr, body.print-quote .qd-sum, body.print-quote .qd-sign { page-break-inside: avoid; }
   body.print-quote .tab-panel:not(#tab-quote) { display: none !important; }
   body.print-quote #tab-quote { display: block !important; }
@@ -764,17 +792,35 @@ body.m-ui .asm-view { grid-template-columns: 1fr !important; }
         <label>วันที่<input type="date" id="qtDate"></label>
         <label>ยืนราคา (วัน)<input type="number" id="qtValidDays" min="1"></label>
         <label>ถึงวันที่<input type="text" id="qtValidTo" readonly tabindex="-1"></label>
-        <label class="span2">เงื่อนไขการชำระเงิน<input type="text" id="qtPayTerms" list="qtPayList"></label>
-        <datalist id="qtPayList">
-          <option value="มัดจำ 50% เมื่อสั่งผลิต · ส่วนที่เหลือก่อนส่งมอบ">
-          <option value="มัดจำ 30% · งวด 2 40% ส่งของ · งวด 3 30% ติดตั้งเสร็จ">
-          <option value="ชำระเต็มจำนวนก่อนส่งมอบ">
-          <option value="เครดิต 30 วัน">
-        </datalist>
-        <label class="span2">กำหนดส่งมอบ / ติดตั้ง<input type="text" id="qtDelivery"></label>
-        <label class="span2">หมายเหตุ<textarea id="qtNotes" rows="3"></textarea></label>
+        <label>วันทำสัญญา<input type="date" id="qtContractDate"></label>
         <label>ผู้เสนอราคา<input type="text" id="qtSales"></label>
         <label>โทรผู้เสนอ<input type="text" id="qtSalesPhone"></label>
+        <label class="span2">กำหนดส่งมอบ / ติดตั้ง<input type="text" id="qtDelivery"></label>
+      </div>
+    </details>
+
+    <details class="qc-sec" open>
+      <summary>Specification</summary>
+      <div class="qc-grid">
+        <label class="span2">System<input type="text" id="qtSpecSystem"></label>
+        <label>สีอลูมิเนียม<input type="text" id="qtSpecColor"></label>
+        <label>ความหนาอลูมิเนียม<input type="text" id="qtSpecThick"></label>
+        <label>สีอุปกรณ์<input type="text" id="qtSpecHwColor"></label>
+        <label>ยี่ห้ออุปกรณ์<input type="text" id="qtSpecHwBrand"></label>
+        <label class="span2">กระจก<input type="text" id="qtSpecGlass"></label>
+      </div>
+    </details>
+
+    <details class="qc-sec" open>
+      <summary>เงื่อนไขการชำระเงิน <span class="qc-hint">จำนวนเงินคิดจากยอดรวมทั้งสิ้น</span></summary>
+      <div class="qt-pay" id="qtPayEditor"></div>
+    </details>
+
+    <details class="qc-sec">
+      <summary>หมายเหตุ / รับประกัน</summary>
+      <div class="qc-grid">
+        <label class="span2">หมายเหตุ (1 บรรทัด = 1 ข้อ)<textarea id="qtNotes" rows="6"></textarea></label>
+        <label class="span2">การรับประกัน<textarea id="qtWarranty" rows="2"></textarea></label>
       </div>
     </details>
 
@@ -814,6 +860,7 @@ body.m-ui .asm-view { grid-template-columns: 1fr !important; }
         <label>เลขผู้เสียภาษี<input type="text" id="coTaxId"></label>
         <label>โทร<input type="text" id="coPhone"></label>
         <label class="span2">อีเมล<input type="text" id="coEmail"></label>
+        <label class="span2">บัญชีรับโอน<textarea id="coBank" rows="3"></textarea></label>
         <label class="span2">โลโก้<span class="qc-inline"><input type="file" id="coLogoFile" accept="image/*"><button type="button" class="dz-tb" onclick="setCompanyLogo('')">ลบ</button></span></label>
         <input type="hidden" id="coLogo">
       </div>
@@ -978,12 +1025,19 @@ body.m-ui .asm-view { grid-template-columns: 1fr !important; }
             <button class="dz-tb k" data-k="S">→ บานเลื่อน</button>
             <button class="dz-tb k" data-k="C">◁ บานเปิด</button>
             <button class="dz-tb k" data-k="A">△ กระทุ้ง</button>
+            <button class="dz-tb k" data-k="B" title="บานเฟี้ยม FUJI — ใช้ได้เมื่อบานเป็นช่องเดียวเต็มกรอบ">⫴ บานเฟี้ยม</button>
             <button class="dz-tb" id="dzFlip">สลับทิศ</button>
             <span class="dz-sep"></span>
             <button class="dz-tb" id="dzSplitV">แบ่งซ้าย | ขวา</button>
             <button class="dz-tb" id="dzSplitH">แบ่งบน / ล่าง</button>
             <button class="dz-tb danger" id="dzDelCol">รวมช่อง</button>
             <button class="dz-tb danger" id="dzDelRow">ลบแถว</button>
+          </div>
+          <div class="dz-tools dz-fold s2" id="dzFoldOpts" hidden>
+            <span class="lbl">บานเฟี้ยม:</span>
+            <label>จำนวนบาน <select id="dzFoldN"></select></label>
+            <label>พับซ้าย-ขวา <select id="dzFoldA"></select></label>
+            <label>ด้านล่าง <select id="dzFoldT"><option value="F">เฟรมล่าง F7969</option><option value="U">รางยู F7932</option></select></label>
           </div>
           <p class="note s2" style="margin-top:.4rem;">คลิกช่องเพื่อเลือก · คลิกตัวเลขมิติบนแบบเพื่อแก้ · ลากจุดน้ำเงินปรับกว้าง/สูงรวม · บานเลื่อนที่ติดกันจะเกยกันอัตโนมัติ, บานเปิดคู่ติดกันจะชนกลาง</p>
           <p class="note s3" style="margin-top:.4rem;">คลิกชิ้นอลูมิเนียมบนแบบ (เฟรม / เสาแบ่ง / เสา-ขวางบาน / กระจก = คิ้ว) เพื่อเลือกโปรไฟล์ของตำแหน่งนั้น · ซ้าย/ขวา ตามรูปที่วาด · <span style="background:rgba(255,193,7,.35);padding:0 4px;border-radius:3px;">สีเหลือง</span> = แก้แล้ว · ชิ้นมุ้ง: คลิกแถวในตาราง · ค่าของชิ้นที่ไม่มีในแบบตอนบันทึก (เช่น ปิดมุ้ง) จะถูกล้าง</p>
@@ -1310,6 +1364,8 @@ const FUJI_PROFILES = {
   "F7963": { name: "รับเสาเข้ามุมบานคู่", weight: 0.438, cat: "บานเฟี้ยม", thick: 1.2, sys: "บานเฟี้ยมยูโร", page: 48 },
   "F7964": { name: "เสาเข้ามุมบานเฟี้ยม", weight: 1.03, cat: "บานเฟี้ยม", thick: 1.2, sys: "บานเฟี้ยมยูโร", page: 48 },
   "F7974": { name: "ชนกลางบานคู่", weight: 0.799, cat: "บานเฟี้ยม", thick: 1.2, sys: "บานเฟี้ยมยูโร", page: 48 },
+  "F7972": { name: "กรอบบานเฟี้ยม", weight: 1.466, cat: "บานเฟี้ยม", thick: 1.2, sys: "บานเฟี้ยมยูโร", src: "Cutting List บานเฟี้ยม FUJI.xlsx (ไม่มีในเล่ม Master Data)" },
+  "F7961": { name: "รับล็อคเฟรมข้างบานคู่", weight: 0.496, cat: "บานเฟี้ยม", thick: 1.2, sys: "บานเฟี้ยมยูโร", src: "Cutting List บานเฟี้ยม FUJI.xlsx (ไม่มีในเล่ม Master Data)" },
   "F7887": { name: "เฟรมบนบานเฟี้ยม (ไม่มีมุ้ง)", weight: 2.069, cat: "บานเฟี้ยม", thick: 3, sys: "บานเฟี้ยมยูโร", page: 50 },
   "F7889": { name: "เฟรมล่างบานเฟี้ยม (ไม่มีมุ้ง)", weight: 0.888, cat: "บานเฟี้ยม", thick: 1.5, sys: "บานเฟี้ยมยูโร", page: 50 },
   "F7890": { name: "เฟรมล่างรางภายในวางพื้น (ไม่มีมุ้ง)", weight: 0.684, cat: "บานเฟี้ยม", thick: 1.5, sys: "บานเฟี้ยมยูโร", page: 50 },
@@ -2479,11 +2535,15 @@ function _quotationSheet(E) {
 // อ้างอิง: Orgadata LogiKal (รูปบานต่อรายการ), Odoo/SAP (หัวเอกสาร/ยืนราคา/เงื่อนไข/ลายเซ็น), FlowAccount/OFM (รูปแบบไทย)
 // ตัวเลขทั้งหมดมาจาก lastExport (calculate) — ไฟล์นี้แค่จัดหน้า ไม่แตะสูตรราคา
 // =====================================================================
-const QUOTE_FIELDS = ['qtNo', 'qtDate', 'qtValidDays', 'qtCustName', 'qtCustAddr', 'qtCustTaxId', 'qtCustPhone', 'qtCustContact', 'qtSite', 'qtPayTerms', 'qtDelivery', 'qtNotes', 'qtSales', 'qtSalesPhone'];
-const COMPANY_FIELDS = ['coName', 'coAddr', 'coTaxId', 'coPhone', 'coEmail', 'coLogo'];
+const QUOTE_FIELDS = ['qtNo', 'qtDate', 'qtValidDays', 'qtContractDate', 'qtCustName', 'qtCustAddr', 'qtCustTaxId', 'qtCustPhone', 'qtCustContact', 'qtSite', 'qtDelivery', 'qtNotes', 'qtWarranty', 'qtSales', 'qtSalesPhone',
+  'qtSpecSystem', 'qtSpecColor', 'qtSpecThick', 'qtSpecHwColor', 'qtSpecHwBrand', 'qtSpecGlass'];
+const COMPANY_FIELDS = ['coName', 'coAddr', 'coTaxId', 'coPhone', 'coEmail', 'coBank', 'coLogo'];
 const LS_COMPANY = 'cop_v2_company', LS_QSEQ = 'cop_v2_quote_seq';
-let qtView = 'customer', quoteInternalHtml = '', quoteRenderTimer = null;
-
+const CO_BANK_DEFAULT = 'โอนชำระผ่านบัญชี\nธนาคารกสิกรไทย 202-8-89525-1\nบริษัท เอสจีคิว จำกัด';
+const QT_SPEC = [['qtSpecSystem', 'System'], ['qtSpecColor', 'สีอลูมิเนียม'], ['qtSpecThick', 'ความหนาอลูมิเนียม'], ['qtSpecHwColor', 'สีอุปกรณ์'], ['qtSpecHwBrand', 'ยี่ห้ออุปกรณ์'], ['qtSpecGlass', 'กระจก']];
+const QT_PAY_DEFAULT = [{ t: 'วันที่ทำสัญญา', p: 40 }, { t: 'ติดตั้งวงกบ', p: 10 }, { t: 'ติดตั้งงานได้ 50%', p: 20 }, { t: 'ติดตั้งงานได้ 80%', p: 20 }, { t: 'ติดตั้งงานเสร็จสมบูรณ์', p: 10 }];
+const QT_NOTES_OLD = 'ราคารวมค่าติดตั้ง ไม่รวมงานโครงสร้าง / ปูน / ไฟฟ้า\nรับประกันงานติดตั้ง 1 ปี\nขนาดจริงวัดหน้างานก่อนผลิต';
+let qtView = 'customer', quoteInternalHtml = '', quoteRenderTimer = null, qtPay = QT_PAY_DEFAULT.map(r => ({ ...r }));
 function _isoToday() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 function thDate(iso, long) {
   if (!iso) return '';
@@ -2493,17 +2553,47 @@ function thDate(iso, long) {
 function _addDays(iso, n) { const d = new Date((iso || _isoToday()) + 'T00:00:00'); d.setDate(d.getDate() + (n || 0)); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 function quoteDefaults() {
   const sales = ''; // ชื่อคน ไม่ใช่ชื่อบริษัท — ให้ผู้ใช้กรอกเอง
-  return { qtNo: '', qtDate: _isoToday(), qtValidDays: '30', qtCustName: '', qtCustAddr: '', qtCustTaxId: '', qtCustPhone: '', qtCustContact: '', qtSite: '',
-    qtPayTerms: 'มัดจำ 50% เมื่อสั่งผลิต · ส่วนที่เหลือก่อนส่งมอบ', qtDelivery: '30–45 วัน หลังยืนยันแบบและรับมัดจำ',
-    qtNotes: 'ราคารวมค่าติดตั้ง ไม่รวมงานโครงสร้าง / ปูน / ไฟฟ้า\nรับประกันงานติดตั้ง 1 ปี\nขนาดจริงวัดหน้างานก่อนผลิต', qtSales: sales, qtSalesPhone: '' };
+  return { qtNo: '', qtDate: _isoToday(), qtValidDays: '30', qtContractDate: '', qtCustName: '', qtCustAddr: '', qtCustTaxId: '', qtCustPhone: '', qtCustContact: '', qtSite: '',
+    qtDelivery: '30–45 วัน หลังยืนยันแบบและรับมัดจำ',
+    qtNotes: 'ทางผู้รับเหมาและช่างติดตั้งขอสงวนสิทธิ์สินค้าทั้งหมดไว้จนกว่าชำระเงินตามสัญญาครบถ้วนแล้ว\nใบเสนอราคานี้ใช้แทนสัญญาได้\nกรณีเปลี่ยนแปลงรูปแบบ, วัสดุ, ขนาด ต้องเสนอราคาใหม่\nทางผู้รับเหมาและช่างติดตั้งขอสงวนสิทธิ์ในการหยุดงานและยกเลิกสัญญา หากการชำระเงินไม่เป็นไปตามเงื่อนไขที่ตกลงไว้\nกำหนดยืนราคาภายใน 30 วัน นับจากวันที่ออกใบเสนอราคา',
+    qtWarranty: 'ระยะเวลารับประกันงานติดตั้ง 1 ปี อุปกรณ์ทุกชิ้นส่วน\nรับประกันเปลี่ยนใหม่ฟรี 1 ปี (ยกเว้นวัสดุกระจก)',
+    qtSpecSystem: '-', qtSpecColor: '-', qtSpecThick: '-', qtSpecHwColor: '-', qtSpecHwBrand: '-', qtSpecGlass: '-', qtSales: sales, qtSalesPhone: '' };
 }
-function getQuoteState() { const q = {}; QUOTE_FIELDS.forEach(f => { const el = document.getElementById(f); if (el) q[f] = el.value; }); q.qtView = qtView; return q; }
+function getQuoteState() { const q = {}; QUOTE_FIELDS.forEach(f => { const el = document.getElementById(f); if (el) q[f] = el.value; }); q.qtView = qtView; q.qtPay = qtPay.map(r => ({ t: r.t, p: r.p })); return q; }
 function applyQuoteState(q) {
-  const d = quoteDefaults(); q = q || {};
+  const d = quoteDefaults(); q = Object.assign({}, q || {});
+  if (q.qtNotes === QT_NOTES_OLD) q.qtNotes = d.qtNotes; // ข้อความเริ่มต้นเดิม → ใช้ชุดใหม่ (ข้อความที่ผู้ใช้เขียนเองคงไว้)
   QUOTE_FIELDS.forEach(f => { const el = document.getElementById(f); if (el) el.value = q[f] != null ? q[f] : d[f]; });
+  qtPay = Array.isArray(q.qtPay) && q.qtPay.length && q.qtPay.every(r => r && typeof r.t === 'string' && isFinite(+r.p))
+    ? q.qtPay.map(r => ({ t: r.t, p: Math.min(100, Math.max(0, Math.round(+r.p * 10) / 10)) })) : QT_PAY_DEFAULT.map(r => ({ ...r }));
+  renderPayEditor();
   setQuoteView(q.qtView === 'internal' ? 'internal' : 'customer', true);
   updateValidTo();
 }
+// งวดชำระ: จำนวนเงิน = ยอดรวมทั้งสิ้น × % (ปัด 2 ตำแหน่ง) · ถ้ารวม 100% งวดสุดท้ายรับเศษให้ผลรวมเท่ายอดพอดี
+function payRows(total) {
+  const sumP = Math.round(qtPay.reduce((a, r) => a + (+r.p || 0), 0) * 10) / 10;
+  const rows = qtPay.map(r => ({ t: r.t, p: +r.p || 0, amt: Math.round(total * (+r.p || 0)) / 100 }));
+  if (rows.length && sumP === 100) { const diff = Math.round((total - rows.reduce((a, r) => a + r.amt, 0)) * 100) / 100; rows[rows.length - 1].amt = Math.round((rows[rows.length - 1].amt + diff) * 100) / 100; }
+  return { rows, sumP, ok: sumP === 100 };
+}
+function renderPayEditor() {
+  const el = document.getElementById('qtPayEditor'); if (!el) return;
+  const sumP = Math.round(qtPay.reduce((a, r) => a + (+r.p || 0), 0) * 10) / 10;
+  el.innerHTML = qtPay.map((r, i) => `<div class="qp-row" data-i="${i}"><span class="qp-n">${i + 1}</span><input class="qp-t" data-f="t" value="${escapeHtml(r.t)}" aria-label="งวดที่ ${i + 1}"><input class="qp-p" data-f="p" type="number" min="0" max="100" step="0.1" value="${r.p}" aria-label="เปอร์เซ็นต์"><span class="qp-pc">%</span><button type="button" class="dz-ovx" data-f="del" title="ลบงวดนี้">✕</button></div>`).join('') +
+    `<div class="qp-foot"><button type="button" class="dz-tb" data-f="add">＋ เพิ่มงวด</button><span class="qp-sum${sumP === 100 ? '' : ' bad'}">รวม ${sumP}%${sumP === 100 ? '' : ' — ต้องเท่ากับ 100%'}</span></div>`;
+}
+(function payEditorInit() {
+  const el = document.getElementById('qtPayEditor'); if (!el) return;
+  el.addEventListener('change', e => { const row = e.target.closest('.qp-row'); if (!row) return; const r = qtPay[+row.dataset.i]; if (!r) return;
+    if (e.target.dataset.f === 't') r.t = e.target.value.trim();
+    else if (e.target.dataset.f === 'p') r.p = Math.min(100, Math.max(0, Math.round((+e.target.value || 0) * 10) / 10));
+    renderPayEditor(); quoteFieldChanged(); });
+  el.addEventListener('click', e => { const b = e.target.closest('[data-f]'); if (!b || b.tagName === 'INPUT') return;
+    if (b.dataset.f === 'add') qtPay.push({ t: 'งวดที่ ' + (qtPay.length + 1), p: 0 });
+    else if (b.dataset.f === 'del') qtPay.splice(+b.closest('.qp-row').dataset.i, 1);
+    else return; renderPayEditor(); quoteFieldChanged(); });
+})();
 // เลขที่ QTyyyymm-NNN — รันต่อเดือน เก็บตัวนับในเครื่อง · ไม่เปลี่ยนเองหลังสร้างแล้ว
 function newQuoteNo() {
   const d = new Date(), ym = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0');
@@ -2521,6 +2611,7 @@ function quoteFieldChanged() { updateValidTo(); autoSave(); clearTimeout(quoteRe
 // ----- ข้อมูลบริษัท (จำในเครื่อง ใช้ทุกโครงการ) -----
 function loadCompany() {
   let c = {}; try { c = JSON.parse(localStorage.getItem(LS_COMPANY) || '{}'); } catch (e) {}
+  if (!('coBank' in c)) c.coBank = CO_BANK_DEFAULT; // ค่าเริ่มต้นบัญชีรับโอน (แก้ได้ที่หมวดบริษัท)
   COMPANY_FIELDS.forEach(f => { const el = document.getElementById(f); if (el) el.value = c[f] || ''; });
 }
 function saveCompany() {
@@ -2590,6 +2681,7 @@ function renderQuoteDoc() {
   if (!E) { intBox.innerHTML = ''; return; }
   const q = getQuoteState(), co = {}; COMPANY_FIELDS.forEach(f => { const el = document.getElementById(f); co[f] = el ? el.value : ''; });
   E.quote = q; E.company = co;
+  const pay = payRows(E.selling.sellTotal); E.pay = pay;
   const s = E.selling, st = E.settings, esc = escapeHtml, nl = t => esc(t || '').replace(/\n/g, '<br>');
   const money = v => fmt(v), validTo = (parseInt(q.qtValidDays) || 0) ? thDate(_addDays(q.qtDate, parseInt(q.qtValidDays))) : '';
   const rows = E.lines.map((ln, i) => `<tr>
@@ -2642,16 +2734,30 @@ function renderQuoteDoc() {
         ${quoteTotalRows(s, st).map(([l, v, k]) => `<tr${k === 'grand' ? ' class="qd-grand"' : ''}><th>${l}</th><td>${k === 'neg' ? '−' + money(-v) : money(v)}</td></tr>`).join('')}
       </table>
     </section>
+    <section class="qd-spec">
+      <div class="qd-lbl">Specification</div>
+      <div class="qd-spec-g">${QT_SPEC.map(([k, l]) => `<div><span>${l}</span><b>${esc(q[k]) || '-'}</b></div>`).join('')}</div>
+    </section>
     <section class="qd-terms">
-      <div><div class="qd-lbl">เงื่อนไขการชำระเงิน</div><div>${esc(q.qtPayTerms) || '—'}</div>
-        <div class="qd-lbl" style="margin-top:2.5mm;">กำหนดส่งมอบ / ติดตั้ง</div><div>${esc(q.qtDelivery) || '—'}</div></div>
-      <div><div class="qd-lbl">หมายเหตุ</div><div>${nl(q.qtNotes) || '—'}</div></div>
+      <div>
+        <div class="qd-lbl">เงื่อนไขการชำระเงิน <span class="qd-small">(คิดจากยอดรวมทั้งสิ้น)</span></div>
+        ${pay.ok ? '' : `<div class="qd-warn">⚠ งวดชำระรวม ${pay.sumP}% ไม่เท่ากับ 100% — แก้ที่หมวด “เงื่อนไขการชำระเงิน” ก่อนส่ง</div>`}
+        <table class="qd-pay"><tbody>${pay.rows.map((r, i) => `<tr><td class="c">งวดที่ ${i + 1}</td><td>${esc(r.t)}</td><td class="r">${money(r.amt)} บาท</td><td class="r">(${r.p}%)</td></tr>`).join('')}</tbody></table>
+        <div class="qd-bank">${nl(co.coBank) || ''}</div>
+        <div class="qd-lbl" style="margin-top:2.5mm;">กำหนดส่งมอบ / ติดตั้ง</div><div>${esc(q.qtDelivery) || '—'}</div>
+      </div>
+      <div>
+        <div class="qd-lbl">หมายเหตุ</div>
+        <ol class="qd-notes">${(q.qtNotes || '').split('\n').map(t => t.replace(/^\s*\d+[.)]\s*/, '').trim()).filter(Boolean).map(t => `<li>${esc(t)}</li>`).join('')}</ol>
+        <div class="qd-lbl" style="margin-top:2.5mm;">วันทำสัญญา</div><div>${q.qtContractDate ? thDate(q.qtContractDate, true) : '<span class="qd-dots">.................................................</span>'}</div>
+        ${q.qtWarranty ? `<div class="qd-lbl" style="margin-top:2.5mm;">การรับประกัน</div><div>${nl(q.qtWarranty)}</div>` : ''}
+      </div>
     </section>
     <section class="qd-sign">
       ${['ผู้เสนอราคา', 'ผู้อนุมัติ', 'ผู้สั่งซื้อ / ยืนยันสั่งทำ'].map((t, i) => `<div><div class="qd-line"></div><div>(${i === 0 ? esc(q.qtSales) || '&nbsp;' : '&nbsp;'.repeat(40)})</div><div class="qd-strong">${t}</div><div class="qd-small">วันที่ ____/____/______</div></div>`).join('')}
     </section>
   </div>`;
-  intBox.innerHTML = quoteInternalHtml;
+  intBox.innerHTML = (pay.ok ? '' : `<div class="qi-warn">⚠️ งวดชำระรวม ${pay.sumP}% ไม่เท่ากับ 100% — จำนวนเงินรายงวดรวมไม่เท่ายอดรวมทั้งสิ้น</div>`) + quoteInternalHtml;
   // แถบกำไรในแผงซ้าย (ภายใน)
   const mg = s.preVat > 0 ? (s.netProfit / s.preVat * 100) : 0;
   document.getElementById('qtMargin').innerHTML = `<div><span>ทุนรวม</span><b>${fmt(s.costBase)}</b></div><div><span>ขายก่อน VAT</span><b>${fmt(s.preVat)}</b></div><div><span>กำไรสุทธิ</span><b>${fmt(s.netProfit)}</b></div><div><span>margin</span><b>${fmt(mg, 1)}%</b></div>`;
@@ -2692,9 +2798,19 @@ function _quoteSheet(E) {
   quoteTotalRows(s, st).forEach(([l, v, k]) => rows.push(tr(l, v, k === 'grand' ? 'big' : null)));
   rows.push(_row([_cell('(' + bahtText(s.sellTotal) + ')', { style: 'bold', merge: 6 })]));
   rows.push(_row([]));
-  rows.push(_row([_cell('เงื่อนไขการชำระเงิน', { style: 'bold' }), _cell(q.qtPayTerms, { merge: 5 })]));
+  rows.push(_row([_cell('Specification', { style: 'grp', merge: 6 })]));
+  QT_SPEC.forEach(([k, l]) => rows.push(_row([_cell(l, { style: 'bold' }), _cell(q[k] || '-', { merge: 5 })])));
+  rows.push(_row([]));
+  const pay = E.pay || payRows(s.sellTotal);
+  rows.push(_row([_cell('เงื่อนไขการชำระเงิน (คิดจากยอดรวมทั้งสิ้น)', { style: 'grp', merge: 6 })]));
+  if (!pay.ok) rows.push(_row([_cell('⚠ งวดชำระรวม ' + pay.sumP + '% ไม่เท่ากับ 100%', { style: 'bold', merge: 6 })]));
+  pay.rows.forEach((r, i) => rows.push(_row([_cell('งวดที่ ' + (i + 1)), _cell(r.t, { merge: 3 }), _cell(r.amt, { num: true, style: 'num' }), _cell(r.p + '%')])));
+  ((E.company && E.company.coBank) || '').split('\n').filter(Boolean).forEach(t => rows.push(_row([_cell(''), _cell(t, { merge: 5 })])));
+  rows.push(_row([]));
   rows.push(_row([_cell('กำหนดส่งมอบ', { style: 'bold' }), _cell(q.qtDelivery, { merge: 5 })]));
-  (q.qtNotes || '').split('\n').filter(Boolean).forEach((t, i) => rows.push(_row([_cell(i ? '' : 'หมายเหตุ', { style: 'bold' }), _cell(t, { merge: 5 })])));
+  (q.qtNotes || '').split('\n').map(t => t.replace(/^\s*\d+[.)]\s*/, '').trim()).filter(Boolean).forEach((t, i) => rows.push(_row([_cell(i ? '' : 'หมายเหตุ', { style: 'bold' }), _cell((i + 1) + '. ' + t, { merge: 5 })])));
+  rows.push(_row([_cell('วันทำสัญญา', { style: 'bold' }), _cell(q.qtContractDate ? thDate(q.qtContractDate, true) : '..............................', { merge: 5 })]));
+  (q.qtWarranty || '').split('\n').filter(Boolean).forEach((t, i) => rows.push(_row([_cell(i ? '' : 'การรับประกัน', { style: 'bold' }), _cell(t, { merge: 5 })])));
   rows.push(_row([])); rows.push(_row([]));
   rows.push(_row([_cell('ผู้เสนอราคา ' + (q.qtSales || ''), { merge: 1 }), _cell(''), _cell('ผู้อนุมัติ', { merge: 1 }), _cell(''), _cell('ผู้สั่งซื้อ / ยืนยันสั่งทำ', { merge: 1 })]));
   return _sheet('ใบเสนอราคา', [45, 70, 300, 100, 70, 95, 105], rows);
@@ -2840,7 +2956,10 @@ function exportCuttingXls() {
 // unit.type === 'DESIGN', unit.design = { W, H, rows:[{h, cols:[{w,k,d}]}], door, screen, map }
 // k: F=ติดตาย S=บานเลื่อน C=บานเปิด A=กระทุ้ง   d: L/R (บานพับ / เลื่อนไปทาง) หรือ T/B (กระทุ้ง)
 // =====================================================================
-const DZ_KIND = { F: 'ติดตาย', S: 'บานเลื่อน', C: 'บานเปิด', A: 'กระทุ้ง' };
+const DZ_KIND = { F: 'ติดตาย', S: 'บานเลื่อน', C: 'บานเปิด', A: 'กระทุ้ง', B: 'บานเฟี้ยม' };
+// บานเฟี้ยม FUJI: อุปกรณ์ต่อชุดจาก "Cutting List บานเฟี้ยม FUJI.xlsx" — key = จำนวนบาน|พับซ้าย|พับขวา|F (เฟรมล่าง) / U (รางยู)
+// ค่า = จำนวน หรือ [[สูง H ≤ t, จำนวน], ...] ตามสูตร IF(H<=…) ในชีตนั้น · ไม่รวมยาง/สักหลาด (คิดตามความยาว)
+const FOLD_HW = {"2|2|0|F":[["HD-640 บานพับล้อบนเฟี้ยม",1],["HD-641 บานพับเฟี้ยม",[[2700,7],[1000000000,10]]],["HD-642 บานพับมือจับเฟี้ยม",1],["HD-643 บานพับไกด์ล่างเฟี้ยม",1],["HD-474 มือจับกลอนรุ่นก้านโยก",1],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",1],["HD-1180 ก้าน AL สไลด์ 19.5 mm",2],["HD-213 ฉากเข้ามุมปรับได้",8],["HD-200 ฉากประคองมุม",24]],"3|3|0|F":[["HD-640 บานพับล้อบนเฟี้ยม",1],["HD-641 บานพับเฟี้ยม",[[2500,7],[3000,10],[1000000000,13]]],["HD-642 บานพับมือจับเฟี้ยม",1],["HD-643 บานพับไกด์ล่างเฟี้ยม",1],["HD-474 มือจับกลอนรุ่นก้านโยก",1],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",1],["HD-1180 ก้าน AL สไลด์ 19.5 mm",2],["HD-213 ฉากเข้ามุมปรับได้",12],["HD-200 ฉากประคองมุม",36],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบเจาะ",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"3|2|1|F":[["HD-640 บานพับล้อบนเฟี้ยม",1],["HD-641 บานพับเฟี้ยม",[[2700,9],[1000000000,12]]],["HD-642 บานพับมือจับเฟี้ยม",1],["HD-643 บานพับไกด์ล่างเฟี้ยม",1],["HD-474 มือจับกลอนรุ่นก้านโยก",1],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",1],["HD-1180 ก้าน AL สไลด์ 19.5 mm",2],["HD-213 ฉากเข้ามุมปรับได้",12],["HD-200 ฉากประคองมุม",36],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"4|4|0|F":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2700,11],[1000000000,16]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",16],["HD-200 ฉากประคองมุม",48]],"4|3|1|F":[["HD-640 บานพับล้อบนเฟี้ยม",1],["HD-641 บานพับเฟี้ยม",[[2700,7],[1000000000,10]]],["HD-642 บานพับมือจับเฟี้ยม",1],["HD-643 บานพับไกด์ล่างเฟี้ยม",1],["HD-474 มือจับกลอนรุ่นก้านโยก",1],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",1],["HD-1180 ก้าน AL สไลด์ 19.5 mm",2],["HD-213 ฉากเข้ามุมปรับได้",16],["HD-200 ฉากประคองมุม",48],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"4|2|2|F":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2500,14],[3000,20],[1000000000,26]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",16],["HD-200 ฉากประคองมุม",48]],"5|5|0|F":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2700,11],[1000000000,16]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",20],["HD-200 ฉากประคองมุม",60],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบเจาะ",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"5|4|1|F":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2700,14],[1000000000,20]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",20],["HD-200 ฉากประคองมุม",60],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"5|3|2|F":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2700,14],[1000000000,20]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",20],["HD-200 ฉากประคองมุม",60],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"6|6|0|F":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,15],[1000000000,22]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",24],["HD-200 ฉากประคองมุม",72]],"6|5|1|F":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2700,11],[1000000000,16]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",24],["HD-200 ฉากประคองมุม",48],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"6|4|2|F":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,16],[1000000000,24]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",24],["HD-200 ฉากประคองมุม",72]],"6|3|3|F":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2500,14],[3000,18],[1000000000,22]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",24],["HD-200 ฉากประคองมุม",72],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"7|7|0|F":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,15],[1000000000,22]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",28],["HD-200 ฉากประคองมุม",84],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบเจาะ",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"7|6|1|F":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,17],[1000000000,24]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",28],["HD-200 ฉากประคองมุม",84],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"7|5|2|F":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,18],[1000000000,26]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",28],["HD-200 ฉากประคองมุม",84],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"7|4|3|F":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2500,18],[3000,26],[1000000000,34]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",28],["HD-200 ฉากประคองมุม",84],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"8|8|0|F":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,19],[1000000000,28]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",32],["HD-200 ฉากประคองมุม",96]],"8|7|1|F":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,15],[1000000000,22]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",32],["HD-200 ฉากประคองมุม",96],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"8|4|4|F":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,32]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",32],["HD-200 ฉากประคองมุม",96]],"8|5|3|F":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,18],[1000000000,26]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",32],["HD-200 ฉากประคองมุม",96],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"8|6|2|F":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,32]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",32],["HD-200 ฉากประคองมุม",96]],"9|9|0|F":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,19],[1000000000,28]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",36],["HD-200 ฉากประคองมุม",108],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบเจาะ",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"9|8|1|F":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,21],[1000000000,30]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",36],["HD-200 ฉากประคองมุม",108],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"9|7|2|F":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,32]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",36],["HD-200 ฉากประคองมุม",108],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"9|6|3|F":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,32]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",36],["HD-200 ฉากประคองมุม",108],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"9|5|4|F":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,32]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",36],["HD-200 ฉากประคองมุม",108],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"10|10|0|F":[["HD-640 บานพับล้อบนเฟี้ยม",5],["HD-641 บานพับเฟี้ยม",[[2700,23],[1000000000,34]]],["HD-642 บานพับมือจับเฟี้ยม",5],["HD-643 บานพับไกด์ล่างเฟี้ยม",5],["HD-474 มือจับกลอนรุ่นก้านโยก",5],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",5],["HD-1180 ก้าน AL สไลด์ 19.5 mm",10],["HD-213 ฉากเข้ามุมปรับได้",40],["HD-200 ฉากประคองมุม",120]],"10|9|1|F":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,20],[1000000000,30]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",40],["HD-200 ฉากประคองมุม",120],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"10|8|2|F":[["HD-640 บานพับล้อบนเฟี้ยม",5],["HD-641 บานพับเฟี้ยม",[[2700,26],[1000000000,38]]],["HD-642 บานพับมือจับเฟี้ยม",5],["HD-643 บานพับไกด์ล่างเฟี้ยม",5],["HD-474 มือจับกลอนรุ่นก้านโยก",5],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",5],["HD-1180 ก้าน AL สไลด์ 19.5 mm",10],["HD-213 ฉากเข้ามุมปรับได้",40],["HD-200 ฉากประคองมุม",120]],"10|7|3|F":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,28]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",40],["HD-200 ฉากประคองมุม",120],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"10|6|4|F":[["HD-640 บานพับล้อบนเฟี้ยม",5],["HD-641 บานพับเฟี้ยม",[[2700,26],[1000000000,38]]],["HD-642 บานพับมือจับเฟี้ยม",5],["HD-643 บานพับไกด์ล่างเฟี้ยม",5],["HD-474 มือจับกลอนรุ่นก้านโยก",5],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",5],["HD-1180 ก้าน AL สไลด์ 19.5 mm",10],["HD-213 ฉากเข้ามุมปรับได้",40],["HD-200 ฉากประคองมุม",120]],"10|5|5|F":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,28]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",40],["HD-200 ฉากประคองมุม",120],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"2|2|0|U":[["HD-640 บานพับล้อบนเฟี้ยม",1],["HD-641 บานพับเฟี้ยม",[[2700,7],[1000000000,10]]],["HD-642 บานพับมือจับเฟี้ยม",1],["HD-643 บานพับไกด์ล่างเฟี้ยม",1],["HD-474 มือจับกลอนรุ่นก้านโยก",1],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",1],["HD-1180 ก้าน AL สไลด์ 19.5 mm",2],["HD-213 ฉากเข้ามุมปรับได้",8],["HD-200 ฉากประคองมุม",24]],"3|3|0|U":[["HD-640 บานพับล้อบนเฟี้ยม",1],["HD-641 บานพับเฟี้ยม",[[2700,7],[1000000000,10]]],["HD-642 บานพับมือจับเฟี้ยม",1],["HD-643 บานพับไกด์ล่างเฟี้ยม",1],["HD-474 มือจับกลอนรุ่นก้านโยก",1],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",1],["HD-1180 ก้าน AL สไลด์ 19.5 mm",2],["HD-213 ฉากเข้ามุมปรับได้",12],["HD-200 ฉากประคองมุม",36],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบเจาะ",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"3|2|1|U":[["HD-640 บานพับล้อบนเฟี้ยม",1],["HD-641 บานพับเฟี้ยม",[[2700,9],[1000000000,12]]],["HD-642 บานพับมือจับเฟี้ยม",1],["HD-643 บานพับไกด์ล่างเฟี้ยม",1],["HD-474 มือจับกลอนรุ่นก้านโยก",1],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",1],["HD-1180 ก้าน AL สไลด์ 19.5 mm",2],["HD-213 ฉากเข้ามุมปรับได้",12],["HD-200 ฉากประคองมุม",36],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"4|4|0|U":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2700,11],[1000000000,16]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",16],["HD-200 ฉากประคองมุม",48]],"4|3|1|U":[["HD-640 บานพับล้อบนเฟี้ยม",1],["HD-641 บานพับเฟี้ยม",[[2700,7],[1000000000,10]]],["HD-642 บานพับมือจับเฟี้ยม",1],["HD-643 บานพับไกด์ล่างเฟี้ยม",1],["HD-474 มือจับกลอนรุ่นก้านโยก",1],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",1],["HD-1180 ก้าน AL สไลด์ 19.5 mm",2],["HD-213 ฉากเข้ามุมปรับได้",16],["HD-200 ฉากประคองมุม",48],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"4|2|2|U":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2700,12],[1000000000,18]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",16],["HD-200 ฉากประคองมุม",48]],"5|5|0|U":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2700,11],[1000000000,16]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",20],["HD-200 ฉากประคองมุม",60],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบเจาะ",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"5|4|1|U":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2700,14],[1000000000,20]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",20],["HD-200 ฉากประคองมุม",60],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"5|3|2|U":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2700,14],[1000000000,20]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",20],["HD-200 ฉากประคองมุม",60],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"6|6|0|U":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,15],[1000000000,22]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",24],["HD-200 ฉากประคองมุม",72]],"6|5|1|U":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2700,11],[1000000000,16]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",24],["HD-200 ฉากประคองมุม",48],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"6|4|2|U":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,16],[1000000000,24]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",24],["HD-200 ฉากประคองมุม",72]],"6|3|3|U":[["HD-640 บานพับล้อบนเฟี้ยม",2],["HD-641 บานพับเฟี้ยม",[[2700,14],[1000000000,20]]],["HD-642 บานพับมือจับเฟี้ยม",2],["HD-643 บานพับไกด์ล่างเฟี้ยม",2],["HD-474 มือจับกลอนรุ่นก้านโยก",2],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",2],["HD-1180 ก้าน AL สไลด์ 19.5 mm",4],["HD-213 ฉากเข้ามุมปรับได้",24],["HD-200 ฉากประคองมุม",72],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"7|7|0|U":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,15],[1000000000,22]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",28],["HD-200 ฉากประคองมุม",84],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบเจาะ",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"7|6|1|U":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,17],[1000000000,24]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",28],["HD-200 ฉากประคองมุม",84],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"7|5|2|U":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,18],[1000000000,26]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",28],["HD-200 ฉากประคองมุม",84],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"7|4|3|U":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,18],[1000000000,26]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",28],["HD-200 ฉากประคองมุม",84],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"8|8|0|U":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,19],[1000000000,28]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",32],["HD-200 ฉากประคองมุม",96]],"8|7|1|U":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,15],[1000000000,22]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",32],["HD-200 ฉากประคองมุม",96],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"8|4|4|U":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,32]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",32],["HD-200 ฉากประคองมุม",96]],"8|5|3|U":[["HD-640 บานพับล้อบนเฟี้ยม",3],["HD-641 บานพับเฟี้ยม",[[2700,18],[1000000000,26]]],["HD-642 บานพับมือจับเฟี้ยม",3],["HD-643 บานพับไกด์ล่างเฟี้ยม",3],["HD-474 มือจับกลอนรุ่นก้านโยก",3],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",3],["HD-1180 ก้าน AL สไลด์ 19.5 mm",6],["HD-213 ฉากเข้ามุมปรับได้",32],["HD-200 ฉากประคองมุม",96],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"8|6|2|U":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,32]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",32],["HD-200 ฉากประคองมุม",96]],"9|9|0|U":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,19],[1000000000,28]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",36],["HD-200 ฉากประคองมุม",108],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบเจาะ",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"9|8|1|U":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,21],[1000000000,30]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",36],["HD-200 ฉากประคองมุม",108],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"9|7|2|U":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,32]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",36],["HD-200 ฉากประคองมุม",108],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"9|6|3|U":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,32]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",36],["HD-200 ฉากประคองมุม",108],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"9|5|4|U":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,32]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",36],["HD-200 ฉากประคองมุม",108],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"10|10|0|U":[["HD-640 บานพับล้อบนเฟี้ยม",5],["HD-641 บานพับเฟี้ยม",[[2700,23],[1000000000,34]]],["HD-642 บานพับมือจับเฟี้ยม",5],["HD-643 บานพับไกด์ล่างเฟี้ยม",5],["HD-474 มือจับกลอนรุ่นก้านโยก",5],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",5],["HD-1180 ก้าน AL สไลด์ 19.5 mm",10],["HD-213 ฉากเข้ามุมปรับได้",40],["HD-200 ฉากประคองมุม",120]],"10|9|1|U":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,20],[1000000000,30]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",40],["HD-200 ฉากประคองมุม",120],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"10|8|2|U":[["HD-640 บานพับล้อบนเฟี้ยม",5],["HD-641 บานพับเฟี้ยม",[[2700,26],[1000000000,38]]],["HD-642 บานพับมือจับเฟี้ยม",5],["HD-643 บานพับไกด์ล่างเฟี้ยม",5],["HD-474 มือจับกลอนรุ่นก้านโยก",5],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",5],["HD-1180 ก้าน AL สไลด์ 19.5 mm",10],["HD-213 ฉากเข้ามุมปรับได้",40],["HD-200 ฉากประคองมุม",120]],"10|7|3|U":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,28]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",40],["HD-200 ฉากประคองมุม",120],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]],"10|6|4|U":[["HD-640 บานพับล้อบนเฟี้ยม",5],["HD-641 บานพับเฟี้ยม",[[2700,26],[1000000000,38]]],["HD-642 บานพับมือจับเฟี้ยม",5],["HD-643 บานพับไกด์ล่างเฟี้ยม",5],["HD-474 มือจับกลอนรุ่นก้านโยก",5],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",5],["HD-1180 ก้าน AL สไลด์ 19.5 mm",10],["HD-213 ฉากเข้ามุมปรับได้",40],["HD-200 ฉากประคองมุม",120]],"10|5|5|U":[["HD-640 บานพับล้อบนเฟี้ยม",4],["HD-641 บานพับเฟี้ยม",[[2700,22],[1000000000,28]]],["HD-642 บานพับมือจับเฟี้ยม",4],["HD-643 บานพับไกด์ล่างเฟี้ยม",4],["HD-474 มือจับกลอนรุ่นก้านโยก",4],["HD-312 ตลับกลอนก้านโยกมัลติล็อค",4],["HD-1180 ก้าน AL สไลด์ 19.5 mm",8],["HD-213 ฉากเข้ามุมปรับได้",40],["HD-200 ฉากประคองมุม",120],["HD-481A มือจับก้านโยกกุญแจ",1],["HD-1115 แป้นรับล็อคบานเปิด",1],["HD-850 ตลับกุญแจมัลติล็อค (L35)",1],["HD-803 ไส้กุญแจ1หน้า คาบ้า (L75)",1],["HD-305 กลอนบานเฟี้ยม",2],["จุดรับล็อค แบบสกรู",[[2700,3],[1000000000,4]]],["หมุดล็อค 9 x 9 (KIN LONG)",[[2700,3],[1000000000,4]]]]};
 const DZ_MIN = 150;
 const DZ_ROLES = [
   ['sl_side', 'เฟรมข้าง (บานเลื่อน)', 'F7978'], ['sl_tb', 'เฟรมบน-ล่าง (บานเลื่อน)', 'F7976'],
@@ -2859,6 +2978,12 @@ const DZ_ROLES = [
   // คู่มือ 2025 หน้า 32: ติดตาย|ติดตาย = F7998 · ติดตาย|บานเปิด = F7997 · กระทุ้ง|กระทุ้ง = F7940B · เปิดคิ้วนอก = F7999/F7852 + F7854/F7942
   ['mull_v', 'เสาแบ่งบาน แนวตั้ง (ติดตาย|ติดตาย F7998 · ติดตาย|เปิด F7997 · กระทุ้งคู่ F7940)', 'F7998'], ['mull_vcap', 'ตบเสาแบ่งบาน', 'F7861'], ['mull_h', 'คานแบ่ง/กล่องก้าน (แนวนอน)', 'F7997'],
   // บทบาทเสริม (ว่าง = ใช้ตัวเดียวกับ เฟรมบน-ล่าง / กรอบบาน) — ระบบเอเชีย ORM แยกเฟรมบน/ล่าง และ เสา/ขวาง คนละหน้าตัด
+  // บานเฟี้ยม FUJI (ชีต NP a-b ในไฟล์ Cutting List บานเฟี้ยม) — ORM ว่าง = ใช้ไม่ได้
+  ['fd_top', 'บานเฟี้ยม: เฟรมบน', 'F7968'], ['fd_bot', 'บานเฟี้ยม: เฟรมล่าง', 'F7969'], ['fd_botu', 'บานเฟี้ยม: รางยู', 'F7932'],
+  ['fd_side', 'บานเฟี้ยม: เฟรมข้าง', 'F7970'], ['fd_sidebead', 'บานเฟี้ยม: คิ้วตบเฟรมข้าง', 'F7971'], ['fd_cap', 'บานเฟี้ยม: ตบปิดเฟรม', 'F7973'],
+  ['fd_sash', 'บานเฟี้ยม: กรอบบาน', 'F7972'], ['fd_meet', 'บานเฟี้ยม: ชนกลางบานคู่', 'F7974'], ['fd_lockside', 'บานเฟี้ยม: รับล็อคเฟรมข้างบานคู่', 'F7961'],
+  ['fd_flap', 'บานเฟี้ยม: บังใบ', 'F7975'], ['fd_lockpair', 'บานเฟี้ยม: รับล็อคบานคู่+บานคี่', 'F7962'],
+  ['fd_gbead12', 'บานเฟี้ยม: คิ้วกระจก ≤12 มม.', 'F7935'], ['fd_gbead20', 'บานเฟี้ยม: คิ้วกระจก 14–20 มม.', 'F7949'], ['fd_gbead37', 'บานเฟี้ยม: คิ้วกระจก มู่ลี่', 'F7853'],
   ['sl_top', 'เฟรมบน (ถ้าแยกจากเฟรมล่าง)', ''], ['sl_sash_h', 'ขวางบานเลื่อน (ถ้าแยกจากเสา)', ''],
 ];
 // ค่าเริ่มต้นโปรไฟล์ ORM ต่อตำแหน่ง (ค่า = 'รหัส/ความหนา') — จับคู่จากชื่อชิ้นส่วนใน "รวม DETAIL ORM 01-2568" กับชื่อในเล่มราคา ผู้ใช้แก้ได้ทุกช่อง
@@ -2901,6 +3026,8 @@ const DZ_PRESETS = [
   { name: 'ช่องแสง+เลื่อน 2', W: 1800, H: 1800, rows: [[['F']], [['S', 'R'], ['S', 'L']]], rh: [.3, .7] },
   { name: 'ประตูเลื่อน 2', W: 2000, H: 2200, rows: [[['S', 'R'], ['S', 'L']]], door: true },
   { name: 'ประตูสวิงคู่', W: 1600, H: 2100, rows: [[['C', 'L'], ['C', 'R']]], door: true },
+  { name: 'เฟี้ยม 4 บาน', W: 3200, H: 2400, rows: [[['B', 'L', 4, 4]]] },
+  { name: 'เฟี้ยม 6 (3-3)', W: 4500, H: 2400, rows: [[['B', 'L', 6, 3]]] },
 ];
 const DZ_R10 = n => +n; // ไม่ปัดตัวเลข — รับทศนิยมได้
 let dzMapDefault = {};
@@ -2924,7 +3051,7 @@ function dzGeo(d) {
     let x = 0;
     r.cols.forEach((c, j) => {
       const prev = r.cols[j - 1], next = r.cols[j + 1];
-      const cell = { i, j, id: c.id, k: c.k, d: c.d, x, y, w: c.w, h: r.h, prev, next,
+      const cell = { i, j, id: c.id, k: c.k, d: c.d, n: c.n, a: c.a, x, y, w: c.w, h: r.h, prev, next,
         lS: !!(c.k === 'S' && prev && prev.k === 'S'), rS: !!(c.k === 'S' && next && next.k === 'S'),
         lC: !!(c.k === 'C' && prev && prev.k === 'C'), rC: !!(c.k === 'C' && next && next.k === 'C') };
       // no mullion between S-S, C-C, or S-F (fixed sits in the sliding frame)
@@ -3002,8 +3129,42 @@ function designBuild(u) {
       if (e) { if (e.len > 0) pc.len = Math.round(e.len * 10) / 10; if (e.qty >= 1) pc.qty = Math.round(e.qty); pc.edited = true; }
       (c ? pieces : skipped).push(pc); }); };
   const addHw = (n, q, unit) => { hw[n] = hw[n] || { qty: 0, unit: unit || 'ชุด' }; hw[n].qty += q; };
-  const hasS = G.cells.some(c => c.k === 'S'), hasCA = G.cells.some(c => c.k === 'C' || c.k === 'A');
   const LR = ['F.L', 'F.R'];
+  let warn = '';
+  const done = () => {
+  // ชิ้นที่ผู้ใช้เพิ่มเอง (ไม่มีรหัส = แสดงเป็นแถวรอเลือก)
+  (d.extra || []).forEach(x => { const L = Math.round((+x.len || 0) * 10) / 10, q = Math.max(1, Math.round(+x.qty || 1));
+    const pc = { key: outBrand + '|' + (x.code || ''), part: x.part || 'ชิ้นเพิ่ม', len: L, qty: q, role: 'extra', origPart: x.part || 'ชิ้นเพิ่ม', posOf: ['MISC'], extraId: x.id, rk: 'extra|' + x.id, ek: 'extra|' + x.id, fLen: L, fQty: q };
+    (x.code && L > 0 ? pieces : skipped).push(pc); });
+  const hardware = Object.keys(hw).map(n => ({ name: n, qty: hw[n].qty, unit: hw[n].unit, price: 0 }));
+  return { label: designLabel(d), brand: outBrand, pieces, skipped, hardware, glassPanels: glass.filter(g => g.h > 0 && g.w > 0), warn };
+  };
+  // ---------- บานเฟี้ยม FUJI: ทั้งกรอบเป็นช่องเดียว ชนิด B (สูตรจากชีต NP a-b / (U)) ----------
+  if (G.cells.length === 1 && G.cells[0].k === 'B') {
+    const c = G.cells[0], N = Math.min(10, Math.max(2, Math.round(c.n || 4))), A = Math.min(N, Math.max(Math.ceil(N / 2), Math.round(c.a == null ? N : c.a))), Bn = N - A, U = d.foldTrack === 'U';
+    const HS = H - 55 - 7 - 7 - (U ? 0 : 25);
+    const X = Bn === 0 ? (N % 2 === 0 ? 50 : 18) : (N % 2 === 1 ? 58 : (A % 2 === 0 ? 71 : 23));
+    const CR = Bn === 0 ? (W - 18 - 9.5 - 8 * (N - 1) - X - 18) / N : (W - 18 - 9.5 - 8 * (N - 2) - X - 9.5 - 18) / N;
+    if (CR <= 130 || HS <= 160) warn = 'ขนาดเล็กเกินไปสำหรับบานเฟี้ยม ' + N + ' บาน (กว้างบานเหลือ ' + Math.round(CR) + ' มม.)';
+    const P = 'C:' + c.id + '.G', side = U ? 75 : 120;
+    add('fd_top', 'เฟรมบน', W - 36, 1, 'F.T'); add(U ? 'fd_botu' : 'fd_bot', U ? 'รางยู' : 'เฟรมล่าง', W - 36, 1, 'F.B');
+    add('fd_side', 'เฟรมข้าง', H, 2, LR); add('fd_sidebead', 'คิ้วตบเฟรมข้าง', H - side, 2, LR);
+    add('fd_cap', 'ตบปิดเฟรม (ตั้ง)', H - side, 2, LR); add('fd_cap', 'ตบปิดเฟรม (นอน)', W - 40, U ? 1 : 2, U ? 'F.T' : ['F.T', 'F.B']);
+    add('fd_sash', 'กรอบบาน (ตั้ง)', HS, 2 * N, P); add('fd_sash', 'กรอบบาน (ขวาง)', CR, 2 * N, P);
+    if (Bn === 0 && N % 2 === 0) { add('fd_meet', 'ชนกลางบานคู่', HS, 1, P); add('fd_lockside', 'รับล็อคเฟรมข้างบานคู่', H - 80, 1, P); }
+    else if (Bn === 0) add('fd_flap', 'บังใบ', HS, 1, P);
+    else if (N % 2 === 1) { add('fd_flap', 'บังใบ', HS, 1, P); add('fd_lockpair', 'รับล็อคบานคู่+บานคี่', HS, 1, P); }
+    else if (A % 2 === 0) add('fd_meet', 'ชนกลางบานคู่', HS, 2, P);
+    else add('fd_flap', 'บังใบ', HS, 2, P);
+    const gt = +((String(u.glassName || '').match(/(\d+(?:\.\d+)?)\s*มม/) || [])[1] || 12), gb = gt <= 12 ? 'fd_gbead12' : gt <= 20 ? 'fd_gbead20' : 'fd_gbead37';
+    add(gb, 'คิ้วกระจก (ตั้ง)', HS - 160, 2 * N, P); add(gb, 'คิ้วกระจก (นอน)', CR - 120, 2 * N, P);
+    for (let i = 0; i < N; i++) glass.push({ h: Math.round((HS - 130) * 10) / 10, w: Math.round((CR - 130) * 10) / 10 });
+    const rows = FOLD_HW[[N, A, Bn, U ? 'U' : 'F'].join('|')];
+    if (rows) rows.forEach(([nm, r]) => { const q = Array.isArray(r) ? (r.find(x => H <= x[0]) || r[r.length - 1])[1] : r; if (q > 0) addHw(nm, q, 'ชิ้น'); });
+    else warn = (warn ? warn + ' · ' : '') + 'ไม่มีข้อมูลอุปกรณ์ของแบบ ' + N + ' บาน ' + A + '-' + Bn;
+    return done();
+  }
+  const hasS = G.cells.some(c => c.k === 'S'), hasCA = G.cells.some(c => c.k === 'C' || c.k === 'A');
   // --- outer frame ---
   if (hasS) {
     add('sl_side', 'เฟรมข้าง', H, 2, LR);
@@ -3059,14 +3220,11 @@ function designBuild(u) {
       }
     }
   });
-  // ชิ้นที่ผู้ใช้เพิ่มเอง (ไม่มีรหัส = แสดงเป็นแถวรอเลือก)
-  (d.extra || []).forEach(x => { const L = Math.round((+x.len || 0) * 10) / 10, q = Math.max(1, Math.round(+x.qty || 1));
-    const pc = { key: outBrand + '|' + (x.code || ''), part: x.part || 'ชิ้นเพิ่ม', len: L, qty: q, role: 'extra', origPart: x.part || 'ชิ้นเพิ่ม', posOf: ['MISC'], extraId: x.id, rk: 'extra|' + x.id, ek: 'extra|' + x.id, fLen: L, fQty: q };
-    (x.code && L > 0 ? pieces : skipped).push(pc); });
-  const hardware = Object.keys(hw).map(n => ({ name: n, qty: hw[n].qty, unit: hw[n].unit, price: 0 }));
-  return { label: designLabel(d), brand: outBrand, pieces, skipped, hardware, glassPanels: glass.filter(g => g.h > 0 && g.w > 0) };
+  return done();
 }
 function designLabel(d) {
+  const c0 = d.rows.length === 1 && d.rows[0].cols.length === 1 ? d.rows[0].cols[0] : null;
+  if (c0 && c0.k === 'B') { const n = c0.n || 4, a = c0.a == null ? n : c0.a; return 'วาดเอง: บานเฟี้ยม ' + n + ' บาน (' + a + '-' + (n - a) + ')' + (d.foldTrack === 'U' ? ' รางยู' : ''); }
   return 'วาดเอง: ' + d.rows.map(r => r.cols.map(c => c.k === 'F' ? 'FIX' : DZ_KIND[c.k]).join('|')).join(' / ') + (d.door ? ' (ประตู)' : '') + (d.screen ? ' +มุ้ง' : '');
 }
 function designThumb(d, w, h) {
@@ -3093,7 +3251,18 @@ function dzDrawSvg(d, sel, outside, thumb) {
   }).sort((a, b) => (a.front ? 1 : 0) - (b.front ? 1 : 0));
   cells.forEach(p => {
     const cx = p.cx0 + p.cw / 2, cy = p.cy0 + p.ch / 2, hit = thumb ? '' : `data-cell="${p.i},${p.j}" style="cursor:pointer"`;
-    if (p.k === 'F') {
+    if (p.k === 'B') {
+      const n = Math.min(10, Math.max(2, p.n || 4)), a = p.a == null ? n : p.a, pw = p.cw / n, flip = (p.d === 'R') !== mir;
+      s += `<rect x="${p.cx0}" y="${p.cy0}" width="${p.cw}" height="${p.ch}" fill="#fff" stroke="#6b7482" stroke-width="2" ${hit}/>`;
+      for (let i = 0; i < n; i++) { const x = p.cx0 + i * pw;
+        s += `<path d="M${x} ${p.cy0}h${pw}v${p.ch}h${-pw}Z M${x + S} ${p.cy0 + S}v${p.ch - 2 * S}h${pw - 2 * S}v${-(p.ch - 2 * S)}Z" fill-rule="evenodd" ${fr} pointer-events="none"/>`; }
+      // เส้นพับ: บานฝั่งซ้าย a บาน พับไปซ้าย · ฝั่งขวา n-a บาน พับไปขวา (สลับทิศ = กลับด้าน)
+      let zz = '', yT = p.cy0 + p.ch * .12, yB = p.cy0 + p.ch * .88;
+      for (let i = 0; i < n; i++) { const L = flip ? n - a : a, x0 = p.cx0 + i * pw, x1 = x0 + pw, inLeft = i < L, top = (inLeft ? i : n - 1 - i) % 2 === 0;
+        zz += `M${x0} ${top ? yT : yB}L${x1} ${top ? yB : yT}`; }
+      s += `<path d="${zz}" fill="none" stroke="#1c2230" stroke-width="4" stroke-dasharray="26 14" pointer-events="none"/>`;
+      if (!thumb) s += `<text x="${p.cx0 + p.cw / 2}" y="${p.cy0 + p.ch / 2 + 16}" font-family="Kanit,Inter,sans-serif" font-size="${Math.min(64, p.cw / 9)}" font-weight="600" text-anchor="middle" fill="#0b3d6b" pointer-events="none">เฟี้ยม ${n} บาน (${flip ? n - a : a}-${flip ? a : n - a})</text>`;
+    } else if (p.k === 'F') {
       s += `<rect x="${p.cx0}" y="${p.cy0}" width="${p.cw}" height="${p.ch}" fill="#fff" stroke="#6b7482" stroke-width="2" ${hit}/>`;
       s += `<text x="${cx}" y="${cy + 14}" font-family="Kanit,Inter,sans-serif" font-size="${Math.min(70, p.cw / 4, p.ch / 3)}" font-weight="600" text-anchor="middle" fill="#1c2230" pointer-events="none">FIX</text>`;
     } else {
@@ -3137,7 +3306,8 @@ function dzSetRowH(i, h) { if (dz.rows.length === 1) { dz.H = Math.max(300, DZ_R
 function dzLoadPreset(p) {
   dz.W = p.W; dz.H = p.H; dz.door = !!p.door;
   const rh = p.rh || p.rows.map(() => 1 / p.rows.length);
-  dz.rows = p.rows.map((r, i) => ({ h: DZ_R10(p.H * rh[i]), cols: r.map(c => ({ w: 0, k: c[0], d: c[1] || 'L' })) }));
+  dz.rows = p.rows.map((r, i) => ({ h: DZ_R10(p.H * rh[i]), cols: r.map(c => Object.assign({ w: 0, k: c[0], d: c[1] || 'L' }, c[0] === 'B' ? { n: c[2] || 4, a: c[3] == null ? (c[2] || 4) : c[3] } : {})) }));
+  if (dzBrandOf(dz) !== 'FUJI') dz.rows.forEach(r => r.cols.forEach(c => { if (c.k === 'B') c.k = 'F'; })); // บานเฟี้ยมมีเฉพาะ FUJI
   dzFixSums(); dzSel = { i: 0, j: 0 }; dzUpdate();
 }
 // ---------- v2 wizard: ① แบรนด์ → ② วาด → ③ โปรไฟล์ (คลิกชิ้นบนแบบ) ----------
@@ -3161,7 +3331,9 @@ function dzPickBrand(b) {
   const dirty = (dz.extra || []).length || ['pos', 'ov', 'map', 'edits'].some(k => dz[k] && Object.keys(dz[k]).length);
   if (b !== dzBrandOf(dz)) {
     if (dirty && !confirm('เปลี่ยนแบรนด์จะล้างโปรไฟล์ที่เลือก/แก้ไว้ทั้งหมดของบานนี้ — ดำเนินการต่อ?')) return;
-    dz.brand = b; dz.map = {}; dz.ov = {}; dz.pos = {}; dz.edits = {}; dz.extra = []; dzRenderMap(); if (dz3On) dz3Rebuild();
+    dz.brand = b; dz.map = {}; dz.ov = {}; dz.pos = {}; dz.edits = {}; dz.extra = [];
+    if (b !== 'FUJI') dz.rows.forEach(r => r.cols.forEach(c => { if (c.k === 'B') c.k = 'F'; })); // บานเฟี้ยมมีเฉพาะ FUJI
+    dzRenderMap(); if (dz3On) dz3Rebuild();
   }
   dzBrandPicked = true; dzSetBrandUi(); dzGo(2);
 }
@@ -3202,7 +3374,7 @@ function dzMemberSvg(d) {
     return p;
   }).sort((a, b) => (a.front ? 1 : 0) - (b.front ? 1 : 0)).forEach(p => {
     const pre = 'C:' + p.id + '.';
-    if (p.k === 'F') {
+    if (p.k === 'F' || p.k === 'B') {
       s += `<rect data-pos="${pre}G" x="${p.cx0}" y="${p.cy0}" width="${p.cw}" height="${p.ch}"/>`;
       if (rowHasS(p.i)) { const t = Math.min(40, p.ch / 6); s += `<rect data-pos="${pre}T" x="${p.cx0}" y="${p.cy0}" width="${p.cw}" height="${t}"/><rect data-pos="${pre}B" x="${p.cx0}" y="${p.cy0 + p.ch - t}" width="${p.cw}" height="${t}"/>`; }
     } else {
@@ -3370,7 +3542,7 @@ function dzCodeOptions(b) {
   return opts;
 }
 function dzRenderPieces() {
-  const b = designBuild({ design: dz }), ov = dz.ov || {}, POS = dz.pos || {}, m = Object.assign({}, dzLoadMap(), dz.map || {});
+  const dg = document.getElementById('dzGlass'), b = designBuild({ design: dz, glassName: dg && dg.selectedIndex >= 0 ? dg.options[dg.selectedIndex].text : '' }), ov = dz.ov || {}, POS = dz.pos || {}, m = Object.assign({}, dzLoadMap(), dz.map || {});
   // 1 แถว = 1 ชิ้นจากสูตร (แยกตามช่องบาน #N) → แก้ยาว/จำนวน/ลบ ได้ทีละแถว · รหัสยังเปลี่ยนพร้อมกันทุกช่องที่เป็นชิ้นเดียวกัน
   const E = dz.edits || {}, stockLen = parseFloat(document.getElementById('stockLen').value) || 6400;
   const all = b.pieces.map(p => ({ ...p, off: false })).concat((b.skipped || []).map(p => ({ ...p, off: true })));
@@ -3391,6 +3563,7 @@ function dzRenderPieces() {
   const gl = b.glassPanels.map(g => `${g.w}×${g.h}`).join(', ');
   const el = document.getElementById('dzPieces');
   el.innerHTML = `<table><thead><tr><th>รหัส</th><th>ชิ้นส่วน</th><th class="n">ยาว</th><th class="n">จำนวน</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+    ${b.warn ? `<p class="pc-warn" style="font-size:.82rem;margin:.4rem 0;">⚠ ${escapeHtml(b.warn)}</p>` : ''}
     <button class="dz-tb dz-addrow" data-f="addrow">＋ เพิ่มชิ้น</button>
     <p style="margin-top:.4rem;color:var(--muted);">อลูมิเนียม ≈ <strong style="color:var(--text)">${dzBrandOf(dz) === 'FUJI' ? kg.toFixed(2) + ' kg' : bars.toFixed(2) + ' เส้น (ORM คิดต่อเส้น)'}</strong> / ชุด · กระจก ${b.glassPanels.length} แผ่น: ${gl} · อุปกรณ์ ${b.hardware.map(h => h.name + ' ×' + h.qty).join(', ')}</p>`;
   const opts = dzCodeOptions(dzBrandOf(dz));
@@ -3412,6 +3585,17 @@ function dzUpdate() {
   const c = dz.rows[dzSel.i].cols[dzSel.j];
   document.querySelectorAll('.dz-tb.k').forEach(b => b.classList.toggle('on', b.dataset.k === c.k));
   document.getElementById('dzFlip').disabled = c.k === 'F';
+  // บานเฟี้ยม: เฉพาะ FUJI + ทั้งบานเป็นช่องเดียว · ระหว่างเป็นเฟี้ยม ห้ามแบ่งช่อง / ประตู-มุ้งไม่ใช้
+  const single = dz.rows.length === 1 && dz.rows[0].cols.length === 1, isB = c.k === 'B', fuji = dzBrandOf(dz) === 'FUJI';
+  const bb = document.querySelector('.dz-tb.k[data-k="B"]'); bb.disabled = !single || !fuji;
+  bb.title = !fuji ? 'บานเฟี้ยมมีเฉพาะ FUJI' : !single ? 'บานเฟี้ยมต้องเป็นช่องเดียวเต็มกรอบ — รวมช่อง/ลบแถวก่อน' : 'บานเฟี้ยม FUJI';
+  document.getElementById('dzSplitV').disabled = isB; document.getElementById('dzSplitH').disabled = isB;
+  document.getElementById('dzDoor').disabled = isB; document.getElementById('dzScreen').disabled = isB;
+  const fo = document.getElementById('dzFoldOpts'); fo.hidden = !isB;
+  if (isB) { const n = c.n || 4; document.getElementById('dzFoldN').innerHTML = [2, 3, 4, 5, 6, 7, 8, 9, 10].map(k => `<option value="${k}"${k === n ? ' selected' : ''}>${k} บาน</option>`).join('');
+    const opts = []; for (let a = n; a >= Math.ceil(n / 2); a--) if (FOLD_HW[[n, a, n - a, 'F'].join('|')]) opts.push(a);
+    document.getElementById('dzFoldA').innerHTML = opts.map(a => `<option value="${a}"${a === (c.a == null ? n : c.a) ? ' selected' : ''}>${a}-${n - a}${n - a ? '' : ' (พับข้างเดียว)'}</option>`).join('');
+    document.getElementById('dzFoldT').value = dz.foldTrack === 'U' ? 'U' : 'F'; }
   document.getElementById('dzDelCol').disabled = dz.rows[dzSel.i].cols.length < 2;
   document.getElementById('dzDelRow').disabled = dz.rows.length < 2;
   document.getElementById('dzView').textContent = dzOutside ? 'มองนอก' : 'มองใน';
@@ -3429,13 +3613,17 @@ function dzUpdate() {
   const de = $('dzDimEdit');
   de.addEventListener('keydown', e => { if (e.key === 'Enter') dzCommitDim(); if (e.key === 'Escape') { dzDimKey = null; de.style.display = 'none'; } });
   de.addEventListener('blur', dzCommitDim);
-  document.querySelectorAll('.dz-tb.k').forEach(b => b.onclick = () => { const c = dz.rows[dzSel.i].cols[dzSel.j]; c.k = b.dataset.k; if (c.k === 'A' && !'TB'.includes(c.d)) c.d = 'T'; if (c.k !== 'A' && !'LR'.includes(c.d)) c.d = 'L'; dzUpdate(); });
+  document.querySelectorAll('.dz-tb.k').forEach(b => b.onclick = () => { if (b.disabled) return; const c = dz.rows[dzSel.i].cols[dzSel.j]; c.k = b.dataset.k; if (c.k === 'B') { c.n = c.n || 4; c.a = c.a == null ? c.n : c.a; } if (c.k === 'A' && !'TB'.includes(c.d)) c.d = 'T'; if (c.k !== 'A' && !'LR'.includes(c.d)) c.d = 'L'; dzUpdate(); });
   $('dzFlip').onclick = () => { const c = dz.rows[dzSel.i].cols[dzSel.j]; c.d = c.k === 'A' ? (c.d === 'T' ? 'B' : 'T') : (c.d === 'L' ? 'R' : 'L'); dzUpdate(); };
   $('dzSplitV').onclick = () => { const cols = dz.rows[dzSel.i].cols, c = cols[dzSel.j]; if (c.w < 2 * DZ_MIN) return; const a = DZ_R10(c.w / 2); cols.splice(dzSel.j + 1, 0, { w: c.w - a, k: c.k, d: c.d === 'L' ? 'R' : c.d === 'R' ? 'L' : c.d }); c.w = a; dzUpdate(); };
   $('dzSplitH').onclick = () => { const r = dz.rows[dzSel.i]; if (r.h < 2 * DZ_MIN) return; const a = DZ_R10(r.h / 2); dz.rows.splice(dzSel.i + 1, 0, { h: r.h - a, cols: r.cols.map(c => ({ ...c })) }); r.h = a; dzUpdate(); };
   $('dzDelCol').onclick = () => { const cols = dz.rows[dzSel.i].cols; if (cols.length < 2) return; const nj = dzSel.j < cols.length - 1 ? dzSel.j + 1 : dzSel.j - 1; cols[nj].w += cols[dzSel.j].w; cols.splice(dzSel.j, 1); dzSel.j = Math.min(dzSel.j, cols.length - 1); dzUpdate(); };
   $('dzDelRow').onclick = () => { if (dz.rows.length < 2) return; const ni = dzSel.i < dz.rows.length - 1 ? dzSel.i + 1 : dzSel.i - 1; dz.rows[ni].h += dz.rows[dzSel.i].h; dz.rows.splice(dzSel.i, 1); dzSel.i = Math.min(dzSel.i, dz.rows.length - 1); dzSel.j = 0; dzUpdate(); };
   $('dzView').onclick = () => { dzOutside = !dzOutside; dzUpdate(); };
+  const foldCell = () => dz.rows[dzSel.i].cols[dzSel.j];
+  $('dzFoldN').addEventListener('change', e => { const c = foldCell(); c.n = +e.target.value; c.a = c.n; dzUpdate(); });
+  $('dzFoldA').addEventListener('change', e => { const c = foldCell(); c.a = +e.target.value; dzUpdate(); });
+  $('dzFoldT').addEventListener('change', e => { dz.foldTrack = e.target.value; dzUpdate(); });
   $('dzW').addEventListener('change', e => { dz.W = Math.max(300, Math.min(8000, DZ_R10(+e.target.value) || 300)); dzFixSums(); dzUpdate(); });
   $('dzH').addEventListener('change', e => { dz.H = Math.max(300, Math.min(4000, DZ_R10(+e.target.value) || 300)); dzFixSums(); dzUpdate(); });
   $('dzDoor').addEventListener('change', e => { dz.door = e.target.checked; dzUpdate(); });
@@ -3488,6 +3676,7 @@ function dzUpdate() {
         if (c[0] === 'S') s += `<path d="M${cx - 6} ${cy}h12m-4 -3l4 3-4 3" fill="none" stroke="currentColor" stroke-width="1.3"/>`;
         else if (c[0] === 'C') s += `<path d="M${c[1] === 'L' ? x : x + cw} ${y}L${c[1] === 'L' ? x + cw : x} ${cy}L${c[1] === 'L' ? x : x + cw} ${y + h}" fill="none" stroke="currentColor" stroke-dasharray="2 1.5"/>`;
         else if (c[0] === 'A') s += `<path d="M${x} ${y}L${cx} ${y + h}L${x + cw} ${y}" fill="none" stroke="currentColor" stroke-dasharray="2 1.5"/>`;
+        else if (c[0] === 'B') { const n = c[2] || 4, pw = cw / n; let d = ''; for (let k = 0; k < n; k++) d += `M${x + k * pw} ${k % 2 ? y + h - 3 : y + 3}L${x + (k + 1) * pw} ${k % 2 ? y + 3 : y + h - 3}`; s += `<path d="${d}" fill="none" stroke="currentColor" stroke-width="1.2"/>`; }
         else s += `<text x="${cx}" y="${cy + 2.5}" font-size="6" text-anchor="middle" fill="#1c2230">FIX</text>`; }); y += h; });
     return s + '</svg>'; };
   const pe = $('dzPresets');
@@ -3628,6 +3817,9 @@ function dz3Build(d) {
         movers.push(t => { g.rotation.y = (hl ? -1 : 1) * t * 65 * Math.PI / 180; }); }
       else { const hy = tp ? sy + K - sf / 2 : sy + sf / 2; bx(sx + Mw / 2 - 65, hy - 8, sx + Mw / 2 + 65, hy + 8, z0 - 14, z0, dark, g);
         movers.push(t => { g.rotation.x = (tp ? -1 : 1) * t * 35 * Math.PI / 180; }); }
+    } else if (c.k === 'B') {   // บานเฟี้ยม: N บาน (แสดงรูปทรง ไม่ขยับพับ)
+      const n = Math.min(10, Math.max(2, c.n || 4)), pw = (ox1 - ox0) / n;
+      for (let i = 0; i < n; i++) { const x0 = ox0 + i * pw; ring(x0, oy0, x0 + pw, oy1, 40, 40, zS - 30, zS + 22, alu); bx(x0 + 30, oy0 + 30, x0 + pw - 30, oy1 - 30, zS - 7, zS - 1, glass); }
     } else if (inS) {   // ติดตายในเฟรมบานเลื่อน: อยู่รางตรงข้ามกับบานเลื่อนข้างเคียง + เสาเกี่ยวฝั่งที่ชนบานเลื่อน
       const pl = at[c.i + ',' + (c.j - 1)], pr = at[c.i + ',' + (c.j + 1)], sL = pl && pl.k === 'S' && c.lNoMull, sR = pr && pr.k === 'S' && c.rNoMull;
       const zc = sL ? -trk(pl.gi) : sR ? -trk(pr.gi) : trk(1);
